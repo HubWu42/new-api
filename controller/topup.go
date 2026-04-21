@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"net/url"
 	"strconv"
+	"strings"
 	"sync"
 	"time"
 
@@ -217,19 +218,40 @@ func RequestEpay(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{"message": "error", "data": "当前管理员未配置支付信息"})
 		return
 	}
-	uri, params, err := client.Purchase(&epay.PurchaseArgs{
-		Type:           req.PaymentMethod,
-		ServiceTradeNo: tradeNo,
-		Name:           fmt.Sprintf("TUC%d", req.Amount),
-		Money:          strconv.FormatFloat(payMoney, 'f', 2, 64),
-		Device:         epay.PC,
-		NotifyUrl:      notifyUrl,
-		ReturnUrl:      returnUrl,
-	})
-	if err != nil {
-		logger.LogError(c.Request.Context(), fmt.Sprintf("易支付 拉起支付失败 user_id=%d trade_no=%s payment_method=%s amount=%d error=%q", id, tradeNo, req.PaymentMethod, req.Amount, err.Error()))
-		c.JSON(http.StatusOK, gin.H{"message": "error", "data": "拉起支付失败"})
-		return
+
+	// XorPay 检测：PayAddress 包含 xorpay.com 时使用 XorPay API
+	isXorPay := strings.Contains(operation_setting.PayAddress, "xorpay.com")
+
+	var uri string
+	var params map[string]string
+
+	if isXorPay {
+		xorpayClient := service.NewXorPayClient(operation_setting.EpayId, operation_setting.EpayKey, operation_setting.PayAddress)
+		xorPayType := req.PaymentMethod // alipay 或 wxpay 直接对应 XorPay 的 pay_type
+		qrURL, xorAoid, err := xorpayClient.CreateOrder(tradeNo, fmt.Sprintf("TUC%d", req.Amount), xorPayType, strconv.FormatFloat(payMoney, 'f', 2, 64), notifyUrl.String())
+		if err != nil {
+			logger.LogError(c.Request.Context(), fmt.Sprintf("XorPay 拉起支付失败 user_id=%d trade_no=%s payment_method=%s amount=%d error=%q", id, tradeNo, req.PaymentMethod, req.Amount, err.Error()))
+			c.JSON(http.StatusOK, gin.H{"message": "error", "data": "拉起支付失败"})
+			return
+		}
+		logger.LogInfo(c.Request.Context(), fmt.Sprintf("XorPay 充值订单创建成功 user_id=%d trade_no=%s payment_method=%s amount=%d money=%.2f", id, tradeNo, req.PaymentMethod, req.Amount, payMoney))
+		params = map[string]string{"qr_url": qrURL, "aoid": xorAoid, "order_id": tradeNo}
+	} else {
+		var err error
+		uri, params, err = client.Purchase(&epay.PurchaseArgs{
+			Type:           req.PaymentMethod,
+			ServiceTradeNo: tradeNo,
+			Name:           fmt.Sprintf("TUC%d", req.Amount),
+			Money:          strconv.FormatFloat(payMoney, 'f', 2, 64),
+			Device:         epay.PC,
+			NotifyUrl:      notifyUrl,
+			ReturnUrl:      returnUrl,
+		})
+		if err != nil {
+			logger.LogError(c.Request.Context(), fmt.Sprintf("易支付 拉起支付失败 user_id=%d trade_no=%s payment_method=%s amount=%d error=%q", id, tradeNo, req.PaymentMethod, req.Amount, err.Error()))
+			c.JSON(http.StatusOK, gin.H{"message": "error", "data": "拉起支付失败"})
+			return
+		}
 	}
 	amount := req.Amount
 	if operation_setting.GetQuotaDisplayType() == operation_setting.QuotaDisplayTypeTokens {
@@ -333,6 +355,12 @@ func EpayNotify(c *gin.Context) {
 		_, _ = c.Writer.Write([]byte("fail"))
 		return
 	}
+	// XorPay 回调检测：包含 aoid 字段
+	if aoid, ok := params["aoid"]; ok && aoid != "" {
+		handleXorPayNotify(c, params)
+		return
+	}
+
 	client := GetEpayClient()
 	if client == nil {
 		logger.LogError(c.Request.Context(), fmt.Sprintf("易支付 client 未初始化 path=%q client_ip=%s", c.Request.RequestURI, c.ClientIP()))
@@ -401,6 +429,66 @@ func EpayNotify(c *gin.Context) {
 	} else {
 		logger.LogInfo(c.Request.Context(), fmt.Sprintf("易支付 webhook 忽略事件 trade_no=%s callback_type=%s trade_status=%s client_ip=%s verify_info=%q", verifyInfo.ServiceTradeNo, verifyInfo.Type, verifyInfo.TradeStatus, c.ClientIP(), common.GetJsonString(verifyInfo)))
 	}
+}
+
+func handleXorPayNotify(c *gin.Context, params map[string]string) {
+	aoid := params["aoid"]
+	orderID := params["order_id"]
+	payPrice := params["pay_price"]
+	payTime := params["pay_time"]
+	sign := params["sign"]
+
+	xorpayClient := service.NewXorPayClient(operation_setting.EpayId, operation_setting.EpayKey, operation_setting.PayAddress)
+	if !xorpayClient.VerifyCallback(aoid, orderID, payPrice, payTime, sign) {
+		logger.LogWarn(c.Request.Context(), fmt.Sprintf("XorPay webhook 验签失败 aoid=%s order_id=%s pay_price=%s sign=%s", aoid, orderID, payPrice, sign))
+		_, _ = c.Writer.Write([]byte("fail"))
+		return
+	}
+
+	logger.LogInfo(c.Request.Context(), fmt.Sprintf("XorPay webhook 验签成功 aoid=%s order_id=%s pay_price=%s pay_time=%s", aoid, orderID, payPrice, payTime))
+
+	LockOrder(orderID)
+	defer UnlockOrder(orderID)
+
+	topUp := model.GetTopUpByTradeNo(orderID)
+	if topUp == nil {
+		logger.LogWarn(c.Request.Context(), fmt.Sprintf("XorPay 回调订单不存在 order_id=%s aoid=%s", orderID, aoid))
+		_, _ = c.Writer.Write([]byte("fail"))
+		return
+	}
+
+	dPayPrice, err := decimal.NewFromString(payPrice)
+	if err != nil {
+		logger.LogError(c.Request.Context(), fmt.Sprintf("XorPay 回调金额解析失败 pay_price=%q order_id=%s", payPrice, orderID))
+		_, _ = c.Writer.Write([]byte("fail"))
+		return
+	}
+	if dPayPrice.Cmp(decimal.NewFromFloat(topUp.Money)) != 0 {
+		logger.LogWarn(c.Request.Context(), fmt.Sprintf("XorPay 回调金额不匹配 order_id=%s expected=%.2f got=%s", orderID, topUp.Money, payPrice))
+		_, _ = c.Writer.Write([]byte("fail"))
+		return
+	}
+
+	if topUp.Status == common.TopUpStatusPending {
+		topUp.Status = common.TopUpStatusSuccess
+		if err := topUp.Update(); err != nil {
+			logger.LogError(c.Request.Context(), fmt.Sprintf("XorPay 更新充值订单失败 trade_no=%s user_id=%d error=%q", topUp.TradeNo, topUp.UserId, err.Error()))
+			_, _ = c.Writer.Write([]byte("fail"))
+			return
+		}
+		dAmount := decimal.NewFromInt(int64(topUp.Amount))
+		dQuotaPerUnit := decimal.NewFromFloat(common.QuotaPerUnit)
+		quotaToAdd := int(dAmount.Mul(dQuotaPerUnit).IntPart())
+		if err := model.IncreaseUserQuota(topUp.UserId, quotaToAdd, true); err != nil {
+			logger.LogError(c.Request.Context(), fmt.Sprintf("XorPay 更新用户额度失败 trade_no=%s user_id=%d quota_to_add=%d error=%q", topUp.TradeNo, topUp.UserId, quotaToAdd, err.Error()))
+			_, _ = c.Writer.Write([]byte("fail"))
+			return
+		}
+		logger.LogInfo(c.Request.Context(), fmt.Sprintf("XorPay 充值成功 trade_no=%s user_id=%d quota_to_add=%d money=%.2f", topUp.TradeNo, topUp.UserId, quotaToAdd, topUp.Money))
+		model.RecordTopupLog(topUp.UserId, fmt.Sprintf("使用在线充值成功，充值金额: %v，支付金额：%f", logger.LogQuota(quotaToAdd), topUp.Money), c.ClientIP(), topUp.PaymentMethod, "xorpay")
+	}
+
+	_, _ = c.Writer.Write([]byte("success"))
 }
 
 func RequestAmount(c *gin.Context) {

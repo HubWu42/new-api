@@ -19,6 +19,7 @@ For commercial licensing, please contact support@quantumnous.com
 
 import React, { useEffect, useState, useContext, useRef } from 'react';
 import { useSearchParams } from 'react-router-dom';
+import { QRCodeCanvas } from 'qrcode.react';
 import {
   API,
   showError,
@@ -105,6 +106,12 @@ const TopUp = () => {
   // 预设充值额度选项
   const [presetAmounts, setPresetAmounts] = useState([]);
   const [selectedPreset, setSelectedPreset] = useState(null);
+
+  // XorPay QR code modal state
+  const [qrCodeOpen, setQrCodeOpen] = useState(false);
+  const [qrCodeData, setQrCodeData] = useState('');
+  const [xorpayOrderId, setXorpayOrderId] = useState('');
+  const [xorpayPollTimer, setXorpayPollTimer] = useState(null);
 
   // 充值配置信息
   const [topupInfo, setTopupInfo] = useState({
@@ -293,6 +300,16 @@ const TopUp = () => {
           if (payWay === 'stripe') {
             // Stripe 支付回调处理
             window.open(data.pay_link, '_blank');
+          } else if (data.qr_url) {
+            // XorPay 扫码支付：渲染二维码弹窗并启动轮询
+            setQrCodeData(data.qr_url);
+            setXorpayOrderId(data.order_id);
+            setQrCodeOpen(true);
+            startXorpayPolling(data.order_id);
+          } else if (data.qr_pic) {
+            // XorPay 扫码支付：展示二维码弹窗
+            setQrCodeData(data.qr_pic);
+            setQrCodeOpen(true);
           } else {
             // 普通支付表单提交
             let params = data;
@@ -330,6 +347,52 @@ const TopUp = () => {
     } finally {
       setOpen(false);
       setConfirmLoading(false);
+    }
+  };
+
+  // XorPay 订单状态轮询
+  const startXorpayPolling = (orderId) => {
+    if (xorpayPollTimer) {
+      clearInterval(xorpayPollTimer);
+    }
+    const startTime = Date.now();
+    const MAX_POLL_MS = 10 * 60 * 1000;
+    const timer = setInterval(async () => {
+      if (Date.now() - startTime > MAX_POLL_MS) {
+        clearInterval(timer);
+        setQrCodeOpen(false);
+        setQrCodeData('');
+        setXorpayOrderId('');
+        setXorpayPollTimer(null);
+        showError(t('支付超时，请重新发起'));
+        return;
+      }
+      try {
+        const res = await API.get('/api/user/topup/self');
+        if (res.data?.success && res.data.data) {
+          const items = res.data.data.items || res.data.data;
+          const currentOrder = Array.isArray(items)
+            ? items.find((item) => item.trade_no === orderId)
+            : null;
+          if (currentOrder?.status === 'success') {
+            clearInterval(timer);
+            setQrCodeOpen(false);
+            setQrCodeData('');
+            setXorpayOrderId('');
+            setXorpayPollTimer(null);
+            showSuccess(t('充值成功！'));
+            getUserQuota().then();
+          }
+        }
+      } catch (e) {}
+    }, 2000);
+    setXorpayPollTimer(timer);
+  };
+
+  const stopXorpayPolling = () => {
+    if (xorpayPollTimer) {
+      clearInterval(xorpayPollTimer);
+      setXorpayPollTimer(null);
     }
   };
 
@@ -910,7 +973,6 @@ const TopUp = () => {
         t={t}
       />
 
-      {/* Creem 充值确认模态框 */}
       <Modal
         title={t('确定要充值 $')}
         visible={creemOpen}
@@ -994,6 +1056,29 @@ const TopUp = () => {
           handleAffLinkClick={handleAffLinkClick}
         />
       </div>
+
+      {/* XorPay 扫码支付模态框 */}
+      <Modal
+        title={t('扫码支付')}
+        visible={qrCodeOpen}
+        onCancel={() => { stopXorpayPolling(); setQrCodeOpen(false); }}
+        maskClosable={false}
+        size='small'
+        centered
+        footer={null}
+      >
+        <div style={{ textAlign: 'center', padding: '20px 0' }}>
+          <div style={{ display: 'inline-block', background: '#fff', padding: '16px', borderRadius: '8px' }}>
+            <QRCodeCanvas value={qrCodeData} size={240} level='H' />
+          </div>
+          <p style={{ fontSize: '14px', color: 'var(--semi-color-text-2)', marginTop: '16px' }}>
+            {t('请使用支付宝扫码支付')}
+          </p>
+          <p style={{ fontSize: '12px', color: 'var(--semi-color-text-3)' }}>
+            {t('支付完成后自动跳转')}
+          </p>
+        </div>
+      </Modal>
     </div>
   );
 };
