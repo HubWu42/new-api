@@ -387,4 +387,6 @@ func SetApiRouter(router *gin.Engine) {
 			deploymentsRoute.DELETE("/:id", controller.DeleteDeployment)
 		}
 	}
+
+	RegisterCostRoutes(apiRouter)
 }

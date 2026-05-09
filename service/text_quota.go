@@ -370,6 +370,13 @@ func PostTextConsumeQuota(ctx *gin.Context, relayInfo *relaycommon.RelayInfo, us
 		model.UpdateChannelUsedQuota(relayInfo.ChannelId, summary.Quota)
 	}
 
+	// Populate actual token counts into PriceData before post-settle hooks run.
+	// The supplier cost hook reads these to compute accurate costs.
+	relayInfo.PriceData.PromptTokens = summary.PromptTokens
+	relayInfo.PriceData.CompletionTokens = summary.CompletionTokens
+	relayInfo.PriceData.CacheTokens = summary.CacheTokens
+	relayInfo.PriceData.CacheCreationTokens = cacheWriteTokensTotal(summary)
+
 	if err := SettleBilling(ctx, relayInfo, summary.Quota); err != nil {
 		logger.LogError(ctx, "error settling billing: "+err.Error())
 	}

@@ -6,7 +6,6 @@ import type {
   BatchDeleteParams,
   BatchSetTagParams,
   Channel,
-  ChannelBalanceResponse,
   ChannelTestResponse,
   CopyChannelParams,
   CopyChannelResponse,
@@ -172,7 +171,7 @@ export async function testChannel(
  */
 export async function updateChannelBalance(
   id: number
-): Promise<ChannelBalanceResponse> {
+): Promise<{ success: boolean; message?: string; balance?: number }> {
   const res = await api.get(`/api/channel/update_balance/${id}`)
   return res.data
 }
@@ -546,3 +545,5 @@ export async function getPrefillGroups(
   const res = await api.get('/api/prefill_group', { params: { type } })
   return res.data
 }
+
+// ============================================================================

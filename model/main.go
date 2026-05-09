@@ -294,6 +294,11 @@ func migrateDB() error {
 			return err
 		}
 	}
+	if extra := GetExtraMigrations(); len(extra) > 0 {
+		if err := DB.AutoMigrate(extra...); err != nil {
+			return err
+		}
+	}
 	return nil
 }
 
@@ -364,6 +369,11 @@ func migrateDBFast() error {
 		}
 	}
 	common.SysLog("database migrated")
+	if extra := GetExtraMigrations(); len(extra) > 0 {
+		if err := DB.AutoMigrate(extra...); err != nil {
+			return err
+		}
+	}
 	return nil
 }
 

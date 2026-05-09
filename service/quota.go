@@ -228,6 +228,12 @@ func PostWssConsumeQuota(ctx *gin.Context, relayInfo *relaycommon.RelayInfo, mod
 		model.UpdateChannelUsedQuota(relayInfo.ChannelId, quota)
 	}
 
+	// Populate actual token counts into PriceData before post-settle hooks run.
+	relayInfo.PriceData.PromptTokens = usage.InputTokens
+	relayInfo.PriceData.CompletionTokens = usage.OutputTokens
+	relayInfo.PriceData.CacheTokens = 0
+	relayInfo.PriceData.CacheCreationTokens = 0
+
 	if err := SettleBilling(ctx, relayInfo, quota); err != nil {
 		logger.LogError(ctx, "error settling billing: "+err.Error())
 	}
@@ -349,6 +355,12 @@ func PostAudioConsumeQuota(ctx *gin.Context, relayInfo *relaycommon.RelayInfo, u
 		model.UpdateChannelUsedQuota(relayInfo.ChannelId, quota)
 	}
 
+	// Populate actual token counts into PriceData before post-settle hooks run.
+	relayInfo.PriceData.PromptTokens = usage.PromptTokens
+	relayInfo.PriceData.CompletionTokens = usage.CompletionTokens
+	relayInfo.PriceData.CacheTokens = usage.PromptTokensDetails.CachedTokens
+	relayInfo.PriceData.CacheCreationTokens = usage.PromptTokensDetails.CachedCreationTokens
+
 	if err := SettleBilling(ctx, relayInfo, quota); err != nil {
 		logger.LogError(ctx, "error settling billing: "+err.Error())
 	}
@@ -447,6 +459,8 @@ func PostConsumeQuota(relayInfo *relaycommon.RelayInfo, quota int, preConsumedQu
 			checkAndSendQuotaNotify(relayInfo, quota, preConsumedQuota)
 		}
 	}
+
+	RunPostSettleHooks(relayInfo, quota)
 
 	return nil
 }
