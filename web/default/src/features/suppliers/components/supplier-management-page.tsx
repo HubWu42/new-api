@@ -1,5 +1,11 @@
 import { useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import { useQuery } from '@tanstack/react-query'
+import { SectionPageLayout } from '@/components/layout'
+import { ConfirmDialog } from '@/components/confirm-dialog'
+import { LoadingState } from '@/components/loading-state'
+import { EmptyState } from '@/components/empty-state'
+import { Combobox } from '@/components/ui/combobox'
 import {
   Card,
   CardContent,
@@ -26,13 +32,6 @@ import {
   DialogTitle,
   DialogFooter,
 } from '@/components/ui/dialog'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Plus, Trash2, ChevronDown, ChevronRight, Pencil } from 'lucide-react'
 import {
@@ -48,6 +47,7 @@ import {
   useUpdateSupplierChannelPrices,
   useParseSupplierLog,
 } from '../hooks/use-supplier-channel'
+import { getChannels } from '@/features/channels/api'
 import type {
   Supplier,
   SupplierChannel,
@@ -73,6 +73,7 @@ function SupplierList({
   const deleteMut = useDeleteSupplier()
   const [createOpen, setCreateOpen] = useState(false)
   const [newName, setNewName] = useState('')
+  const [deleteTarget, setDeleteTarget] = useState<number | null>(null)
 
   const create = () => {
     if (!newName.trim()) return
@@ -92,6 +93,13 @@ function SupplierList({
         },
       }
     )
+  }
+
+  const confirmDelete = () => {
+    if (deleteTarget != null) {
+      deleteMut.mutate(deleteTarget)
+      setDeleteTarget(null)
+    }
   }
 
   return (
@@ -124,8 +132,7 @@ function SupplierList({
                 className='h-6 w-6 shrink-0'
                 onClick={(e) => {
                   e.stopPropagation()
-                  if (s.id && confirm(t('Delete this supplier?')))
-                    deleteMut.mutate(s.id)
+                  if (s.id) setDeleteTarget(s.id)
                 }}
               >
                 <Trash2 className='h-3.5 w-3.5 text-destructive' />
@@ -158,6 +165,17 @@ function SupplierList({
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      <ConfirmDialog
+        open={deleteTarget != null}
+        onOpenChange={(open) => {
+          if (!open) setDeleteTarget(null)
+        }}
+        title={t('Delete this supplier?')}
+        desc={t('? This action cannot be undone.')}
+        destructive
+        handleConfirm={confirmDelete}
+      />
     </Card>
   )
 }
@@ -268,6 +286,7 @@ function ModelPriceTable({
   const updatePrices = useUpdateSupplierChannelPrices(channelId)
   const parseLog = useParseSupplierLog(channelId)
   const [logText, setLogText] = useState('')
+  const [deleteOpen, setDeleteOpen] = useState(false)
 
   const prices = useMemo<SupplierModelCost[]>(
     () => pricesData?.data ?? [],
@@ -340,7 +359,7 @@ function ModelPriceTable({
             className='h-6 w-6 shrink-0'
             onClick={(e) => {
               e.stopPropagation()
-              if (confirm(t('Remove this channel?'))) onDelete()
+              setDeleteOpen(true)
             }}
           >
             <Trash2 className='h-3.5 w-3.5 text-destructive' />
@@ -426,6 +445,18 @@ function ModelPriceTable({
           </div>
         </CardContent>
       )}
+
+      <ConfirmDialog
+        open={deleteOpen}
+        onOpenChange={setDeleteOpen}
+        title={t('Remove this channel?')}
+        desc={t('. This action cannot be undone.')}
+        destructive
+        handleConfirm={() => {
+          onDelete?.()
+          setDeleteOpen(false)
+        }}
+      />
     </Card>
   )
 }
@@ -440,23 +471,58 @@ function ChannelAssociations({ supplierId }: { supplierId: number }) {
   const createChannel = useCreateSupplierChannel(supplierId)
   const deleteChannel = useDeleteSupplierChannel(supplierId)
   const [addOpen, setAddOpen] = useState(false)
-  const [channelId, setChannelId] = useState('')
-  const [ratio, setRatio] = useState('1')
+  const [selectedChannelLabel, setSelectedChannelLabel] = useState('')
+
+  // Fetch all channels for the dropdown
+  const { data: allChannelsData } = useQuery({
+    queryKey: ['all-channels-for-supplier'],
+    queryFn: () => getChannels({ p: 1, page_size: 9999 }),
+    staleTime: 60 * 1000,
+  })
+
+  const allChannels = allChannelsData?.data?.items ?? []
+
+  // Build channel ID -> name lookup map
+  const channelNameMap = useMemo(() => {
+    const map = new Map<number, string>()
+    for (const ch of allChannels) {
+      map.set(ch.id, ch.name)
+    }
+    return map
+  }, [allChannels])
+
+  // Build channel label -> ID reverse lookup (ids may not be unique, names are used)
+  const channelLabelToId = useMemo(() => {
+    const map = new Map<string, number>()
+    for (const ch of allChannels) {
+      map.set(`${ch.name} (ID: ${ch.id})`, ch.id)
+    }
+    return map
+  }, [allChannels])
+
+  // Convert channels to combobox options — use label as value so it shows in the input
+  const channelOptions = useMemo(
+    () =>
+      allChannels.map((ch) => ({
+        value: `${ch.name} (ID: ${ch.id})`,
+        label: `${ch.name} (ID: ${ch.id})`,
+      })),
+    [allChannels]
+  )
 
   const channels: SupplierChannel[] = channelsData?.data ?? []
 
   const add = () => {
-    const cid = Number(channelId)
+    const cid = channelLabelToId.get(selectedChannelLabel)
     if (!cid) return
     createChannel.mutate(
       {
         supplier_id: supplierId,
         channel_id: cid,
-        ratio: Number(ratio) || 1,
+        ratio: 1,
       },
       { onSuccess: () => {
-        setChannelId('')
-        setRatio('1')
+        setSelectedChannelLabel('')
         setAddOpen(false)
       }}
     )
@@ -478,12 +544,12 @@ function ChannelAssociations({ supplierId }: { supplierId: number }) {
         </p>
       ) : (
         <div className='space-y-2'>
-          {channels.map((ch) => (
+          {channels.filter((ch): ch is SupplierChannel & { id: number } => ch.id != null).map((ch) => (
             <ModelPriceTable
               key={ch.id}
               channelId={ch.id}
-              channelName={`Channel #${ch.channel_id}`}
-              onDelete={() => ch.id && deleteChannel.mutate(ch.id)}
+              channelName={channelNameMap.get(ch.channel_id) ?? `Channel #${ch.channel_id}`}
+              onDelete={() => deleteChannel.mutate(ch.id)}
             />
           ))}
         </div>
@@ -496,27 +562,18 @@ function ChannelAssociations({ supplierId }: { supplierId: number }) {
           </DialogHeader>
           <div className='space-y-3'>
             <div className='space-y-1'>
-              <Label>{t('Channel ID')}</Label>
-              <Input
-                value={channelId}
-                onChange={(e) => setChannelId(e.target.value)}
-                type='number'
-                placeholder={t('Enter channel ID')}
-              />
-            </div>
-            <div className='space-y-1'>
-              <Label>{t('Ratio')}</Label>
-              <Input
-                value={ratio}
-                onChange={(e) => setRatio(e.target.value)}
-                type='number'
-                step='0.01'
-                placeholder='1.0'
+              <Label>{t('Channel')}</Label>
+              <Combobox
+                options={channelOptions}
+                value={selectedChannelLabel}
+                onValueChange={(v) => setSelectedChannelLabel(v ?? '')}
+                placeholder={t('Search channel...')}
+                emptyText={t('No channels found')}
               />
             </div>
           </div>
           <DialogFooter>
-            <Button onClick={add} disabled={!channelId}>
+            <Button onClick={add} disabled={!selectedChannelLabel}>
               {t('Add')}
             </Button>
           </DialogFooter>
@@ -538,34 +595,43 @@ export function SupplierManagementPage() {
 
   const currentSupplier = suppliers.find((s) => s.id === selectedId)
 
-  if (isLoading) {
-    return <div className='p-6'>{t('Loading...')}</div>
-  }
-
   return (
-    <div className='flex h-full gap-6 p-6'>
-      {/* Left panel - supplier list */}
-      <div className='w-64 shrink-0'>
-        <SupplierList
-          suppliers={suppliers}
-          selectedId={selectedId}
-          onSelect={setSelectedId}
-        />
-      </div>
-
-      {/* Right panel - detail + channels */}
-      <div className='min-w-0 flex-1 space-y-4'>
-        {!currentSupplier ? (
-          <div className='text-muted-foreground flex h-full items-center justify-center text-sm'>
-            {t('Select a supplier to get started')}
-          </div>
+    <SectionPageLayout>
+      <SectionPageLayout.Title>{t('Supplier Management')}</SectionPageLayout.Title>
+      <SectionPageLayout.Description>
+        {t('Manage suppliers, pricing, and channel associations')}
+      </SectionPageLayout.Description>
+      <SectionPageLayout.Content>
+        {isLoading ? (
+          <LoadingState />
         ) : (
-          <>
-            <SupplierDetailCard supplier={currentSupplier} />
-            <ChannelAssociations supplierId={currentSupplier.id!} />
-          </>
+          <div className='flex h-full gap-6'>
+            {/* Left panel - supplier list */}
+            <div className='w-64 shrink-0'>
+              <SupplierList
+                suppliers={suppliers}
+                selectedId={selectedId}
+                onSelect={setSelectedId}
+              />
+            </div>
+
+            {/* Right panel - detail + channels */}
+            <div className='min-w-0 flex-1 space-y-4'>
+              {!currentSupplier ? (
+                <EmptyState
+                  description={t('Select a supplier to get started')}
+                  className='min-h-[200px]'
+                />
+              ) : (
+                <>
+                  <SupplierDetailCard supplier={currentSupplier} />
+                  <ChannelAssociations supplierId={currentSupplier.id!} />
+                </>
+              )}
+            </div>
+          </div>
         )}
-      </div>
-    </div>
+      </SectionPageLayout.Content>
+    </SectionPageLayout>
   )
 }
