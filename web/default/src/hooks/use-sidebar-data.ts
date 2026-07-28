@@ -17,6 +17,7 @@ import {
   Settings,
   TrendingUp,
   Warehouse,
+  ShoppingBag,
 } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { WORKSPACE_IDS } from '@/components/layout/lib/workspace-registry'
@@ -92,6 +93,11 @@ export function useSidebarData(): SidebarData {
             title: t('Wallet'),
             url: '/wallet',
             icon: Wallet,
+          },
+          {
+            title: t('Store'),
+            url: '/store',
+            icon: ShoppingBag,
           },
           {
             title: t('Profile'),
