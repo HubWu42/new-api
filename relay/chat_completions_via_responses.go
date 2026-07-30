@@ -1,6 +1,7 @@
 package relay
 
 import (
+	"bufio"
 	"fmt"
 	"io"
 	"net/http"
@@ -151,6 +152,13 @@ func chatCompletionsViaResponses(c *gin.Context, info *relaycommon.RelayInfo, ad
 	httpResp = resp.(*http.Response)
 	clientStream := info.IsStream
 	upstreamStream := isResponsesEventStreamContentType(httpResp.Header.Get("Content-Type"))
+	if !upstreamStream {
+		// Some backends (e.g. the ChatGPT Codex /responses endpoint) return a
+		// 200 SSE stream with no Content-Type header at all. The header check
+		// above misses this and the caller then treats the SSE body as JSON,
+		// failing with "invalid character 'e'". Sniff the body prefix instead.
+		upstreamStream = isResponsesEventStreamSSEBody(httpResp.Body, &httpResp.Body)
+	}
 	info.IsStream = clientStream || upstreamStream
 	if httpResp.StatusCode != http.StatusOK {
 		newApiErr := service.RelayErrorHandler(c.Request.Context(), httpResp, false)
@@ -186,4 +194,65 @@ func chatCompletionsViaResponses(c *gin.Context, info *relaycommon.RelayInfo, ad
 
 func isResponsesEventStreamContentType(contentType string) bool {
 	return strings.Contains(strings.ToLower(contentType), "text/event-stream")
+}
+
+// sseSniffLimit bounds how far into the body we look for an SSE marker. A
+// leading BOM plus whitespace still leaves ample room for "event:"/"data:".
+const sseSniffLimit = 64
+
+// isResponsesEventStreamSSEBody detects an SSE response body (a leading
+// "event:" or "data:" prefix, after an optional BOM and/or whitespace) when the
+// upstream omits the Content-Type header — as the ChatGPT Codex /responses
+// endpoint does.
+//
+// It uses bufio.Reader.Peek, which buffers without advancing, so the body is
+// left byte-for-byte intact for whichever handler runs next. This matters in
+// both directions: the stream handler must see the first event, and the JSON
+// handler must see the opening brace. Peeking one extra byte at a time (rather
+// than a single Peek(64)) keeps a short live prefix such as "event: ping\n\n"
+// detectable without blocking for bytes the upstream has not sent yet.
+//
+// JSON-like bodies (leading '{', '[', '"') are rejected as soon as they are
+// recognizable. The wrapped body is written back through out; the caller must
+// use out for subsequent reads.
+func isResponsesEventStreamSSEBody(rc io.ReadCloser, out *io.ReadCloser) bool {
+	if rc == nil {
+		return false
+	}
+	br := bufio.NewReader(rc)
+	// Hand the wrapper back regardless of the verdict: it holds the full body.
+	*out = &peekReadCloser{Reader: br, closer: rc}
+
+	for n := 1; n <= sseSniffLimit; n++ {
+		buf, err := br.Peek(n)
+		trimmed := strings.TrimPrefix(string(buf), "\xef\xbb\xbf")
+		trimmed = strings.TrimLeft(trimmed, " \t\r\n")
+
+		if strings.HasPrefix(trimmed, "event:") || strings.HasPrefix(trimmed, "data:") {
+			return true
+		}
+		if len(trimmed) > 0 && (trimmed[0] == '{' || trimmed[0] == '[' || trimmed[0] == '"') {
+			return false
+		}
+		if err != nil {
+			return false // EOF or read error: not enough to confirm SSE
+		}
+	}
+	return false
+}
+
+// peekReadCloser wraps a bufio.Reader plus the original closer so downstream
+// consumers read from the buffer (which still holds every byte) and close
+// correctly.
+type peekReadCloser struct {
+	Reader *bufio.Reader
+	closer io.ReadCloser
+}
+
+func (p *peekReadCloser) Read(b []byte) (int, error) {
+	return p.Reader.Read(b)
+}
+
+func (p *peekReadCloser) Close() error {
+	return p.closer.Close()
 }
