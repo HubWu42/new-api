@@ -127,3 +127,22 @@ jobs:
           echo '```' >> $GITHUB_STEP_SUMMARY
           docker buildx imagetools inspect hubwu42/new-api:custom >> $GITHUB_STEP_SUMMARY
           echo '```' >> $GITHUB_STEP_SUMMARY
+
+      # Coolify hosts LinkSail as a *service* (compose-based), which has no git
+      # webhook support — only Applications do. So the pipeline pushes the image
+      # and then asks Coolify to redeploy it by uuid.
+      # Note: since v4.0.0-beta.428 /api/v1/deploy only accepts POST (GET → 405).
+      - name: Trigger Coolify redeploy (LinkSail)
+        env:
+          COOLIFY_TOKEN: ${{ secrets.COOLIFY_TOKEN }}
+          COOLIFY_UUID: nxaaajntzlycy98lwxrgcygx
+        run: |
+          if [ -z "$COOLIFY_TOKEN" ]; then
+            echo "::warning::COOLIFY_TOKEN not set — skipping redeploy. Image is pushed; deploy LinkSail manually."
+            exit 0
+          fi
+          code=$(curl -sS -o /tmp/deploy.out -w '%{http_code}' -X POST \
+            -H "Authorization: Bearer $COOLIFY_TOKEN" \
+            "https://coolify.gosail.tech/api/v1/deploy?uuid=${COOLIFY_UUID}&force=false")
+          echo "HTTP $code"; cat /tmp/deploy.out
+          [ "$code" -ge 200 ] && [ "$code" -lt 300 ]
