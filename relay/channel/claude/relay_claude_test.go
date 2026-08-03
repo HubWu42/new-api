@@ -373,3 +373,77 @@ func TestOpenAIChatRequestToClaudeMessages_ClaudeOpus48ThinkingUsesAdaptiveHighE
 	require.Nil(t, claudeRequest.TopP)
 	require.Nil(t, claudeRequest.TopK)
 }
+
+func TestOpenAIChatRequestToClaudeMessages_ClaudeOpus5HighUsesAdaptiveThinking(t *testing.T) {
+	request := dto.GeneralOpenAIRequest{
+		Model:       "claude-opus-5-high",
+		Temperature: commonPointer(0.7),
+		TopP:        commonPointer(0.9),
+		TopK:        commonPointer(40),
+		Messages: []dto.Message{
+			{
+				Role:    "user",
+				Content: "hello",
+			},
+		},
+	}
+
+	claudeRequest, err := relayconvert.OpenAIChatRequestToClaudeMessages(nil, request)
+	require.NoError(t, err)
+	require.Equal(t, "claude-opus-5", claudeRequest.Model)
+	require.NotNil(t, claudeRequest.Thinking)
+	require.Equal(t, "adaptive", claudeRequest.Thinking.Type)
+	require.Equal(t, "summarized", claudeRequest.Thinking.Display)
+	require.JSONEq(t, `{"effort":"high"}`, string(claudeRequest.OutputConfig))
+	require.Nil(t, claudeRequest.Temperature)
+	require.Nil(t, claudeRequest.TopP)
+	require.Nil(t, claudeRequest.TopK)
+}
+
+func TestOpenAIChatRequestToClaudeMessages_ClaudeOpus5BareStripsTemperature(t *testing.T) {
+	request := dto.GeneralOpenAIRequest{
+		Model:       "claude-opus-5",
+		Temperature: commonPointer(0.7),
+		TopP:        commonPointer(0.9),
+		TopK:        commonPointer(40),
+		Messages: []dto.Message{
+			{
+				Role:    "user",
+				Content: "hello",
+			},
+		},
+	}
+
+	claudeRequest, err := relayconvert.OpenAIChatRequestToClaudeMessages(nil, request)
+	require.NoError(t, err)
+	require.Equal(t, "claude-opus-5", claudeRequest.Model)
+	require.Nil(t, claudeRequest.Temperature)
+	require.Nil(t, claudeRequest.TopP)
+	require.Nil(t, claudeRequest.TopK)
+}
+
+func TestOpenAIChatRequestToClaudeMessages_ClaudeFable5ThinkingUsesAdaptiveHighEffort(t *testing.T) {
+	request := dto.GeneralOpenAIRequest{
+		Model:       "claude-fable-5-thinking",
+		Temperature: commonPointer(0.7),
+		TopP:        commonPointer(0.9),
+		TopK:        commonPointer(40),
+		Messages: []dto.Message{
+			{
+				Role:    "user",
+				Content: "hello",
+			},
+		},
+	}
+
+	claudeRequest, err := relayconvert.OpenAIChatRequestToClaudeMessages(nil, request)
+	require.NoError(t, err)
+	require.Equal(t, "claude-fable-5", claudeRequest.Model)
+	require.NotNil(t, claudeRequest.Thinking)
+	require.Equal(t, "adaptive", claudeRequest.Thinking.Type)
+	require.Equal(t, "summarized", claudeRequest.Thinking.Display)
+	require.JSONEq(t, `{"effort":"high"}`, string(claudeRequest.OutputConfig))
+	require.Nil(t, claudeRequest.Temperature)
+	require.Nil(t, claudeRequest.TopP)
+	require.Nil(t, claudeRequest.TopK)
+}

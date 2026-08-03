@@ -27,6 +27,15 @@ type openRouterRequestReasoning struct {
 	Exclude   bool   `json:"exclude,omitempty"`
 }
 
+// isClaude5Family reports whether the model belongs to the Claude 5 family
+// (Opus 5 / Fable 5 / Sonnet 5). These models deprecate temperature/top_p/top_k
+// and use adaptive thinking + output_config.effort instead.
+func isClaude5Family(model string) bool {
+	return strings.HasPrefix(model, "claude-opus-5") ||
+		strings.HasPrefix(model, "claude-fable-5") ||
+		strings.HasPrefix(model, "claude-sonnet-5")
+}
+
 func OpenAIChatRequestToClaudeMessages(c *gin.Context, textRequest dto.GeneralOpenAIRequest) (*dto.ClaudeRequest, error) {
 	claudeTools := make([]any, 0, len(textRequest.Tools))
 
@@ -127,7 +136,20 @@ func OpenAIChatRequestToClaudeMessages(c *gin.Context, textRequest dto.GeneralOp
 		claudeRequest.MaxTokens = &defaultMaxTokens
 	}
 
-	if baseModel, effortLevel, ok := reasoning.TrimEffortSuffix(textRequest.Model); ok && effortLevel != "" &&
+	// Claude 5-family (Opus 5 / Fable 5 / Sonnet 5) deprecate temperature/top_p/top_k
+	// and use adaptive thinking + output_config.effort when an effort level is given.
+	if baseModel, effortLevel, ok := reasoning.TrimEffortSuffix(textRequest.Model); ok && effortLevel != "" && isClaude5Family(textRequest.Model) {
+		claudeRequest.Model = baseModel
+		claudeRequest.Thinking = &dto.Thinking{Type: "adaptive", Display: "summarized"}
+		claudeRequest.OutputConfig = json.RawMessage(fmt.Sprintf(`{"effort":"%s"}`, effortLevel))
+		claudeRequest.Temperature = nil
+		claudeRequest.TopP = nil
+		claudeRequest.TopK = nil
+	} else if isClaude5Family(textRequest.Model) && !strings.HasSuffix(textRequest.Model, "-thinking") {
+		claudeRequest.Temperature = nil
+		claudeRequest.TopP = nil
+		claudeRequest.TopK = nil
+	} else if baseModel, effortLevel, ok := reasoning.TrimEffortSuffix(textRequest.Model); ok && effortLevel != "" &&
 		(strings.HasPrefix(textRequest.Model, "claude-opus-4-6") ||
 			strings.HasPrefix(textRequest.Model, "claude-opus-4-7") ||
 			strings.HasPrefix(textRequest.Model, "claude-opus-4-8")) {
@@ -151,7 +173,8 @@ func OpenAIChatRequestToClaudeMessages(c *gin.Context, textRequest dto.GeneralOp
 
 		trimmedModel := strings.TrimSuffix(textRequest.Model, "-thinking")
 		if strings.HasPrefix(trimmedModel, "claude-opus-4-7") ||
-			strings.HasPrefix(trimmedModel, "claude-opus-4-8") {
+			strings.HasPrefix(trimmedModel, "claude-opus-4-8") ||
+			isClaude5Family(trimmedModel) {
 			claudeRequest.Thinking = &dto.Thinking{Type: "adaptive", Display: "summarized"}
 			claudeRequest.OutputConfig = json.RawMessage(`{"effort":"high"}`)
 			claudeRequest.Temperature = nil
