@@ -120,9 +120,8 @@ jobs:
           docker buildx imagetools create -t "${IMAGE}:${TAG}" \
             "${IMAGE}:${TAG}-amd64" "${IMAGE}:${TAG}-arm64"
 
-          # 部署指针只在正式发布时刷新；干跑只留自己的日期 tag。
-          # 指针就一个 `latest`；linksail 那边的 application 会按本次发布把
-          # docker_registry_image_tag 钉到具体日期 tag，`latest` 只作人肉拉取用。
+          # `latest` 只在正式发布时刷新（干跑只留自己的日期 tag），而且它只作人肉拉取用——
+          # 部署那一步在 linksail 那边把 `docker_registry_image_tag` 钉到具体日期 tag。
           if [ "$IS_DRY" != "true" ]; then
             docker buildx imagetools create -t "${IMAGE}:latest" \
               "${IMAGE}:${TAG}-amd64" "${IMAGE}:${TAG}-arm64"
