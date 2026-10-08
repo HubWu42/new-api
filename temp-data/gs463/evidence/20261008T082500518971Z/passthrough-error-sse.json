@@ -1,0 +1,22 @@
+{
+  "direct": {
+    "status": 400,
+    "headers": {
+      "Server": "BaseHTTP/0.6 Python/3.12.10",
+      "Date": "Thu, 08 Oct 2026 08:25:17 GMT",
+      "Content-Type": "text/plain",
+      "Content-Length": "36"
+    },
+    "body": "event: error\ndata: synthetic error\n\n"
+  },
+  "proxy": {
+    "status": 400,
+    "headers": {
+      "Server": "BaseHTTP/0.6 Python/3.12.10",
+      "Date": "Thu, 08 Oct 2026 08:25:17 GMT",
+      "Content-Type": "text/plain",
+      "Content-Length": "36"
+    },
+    "body": "event: error\ndata: synthetic error\n\n"
+  }
+}

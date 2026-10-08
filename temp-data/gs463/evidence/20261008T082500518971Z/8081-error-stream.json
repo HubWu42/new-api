@@ -1,0 +1,26 @@
+{
+  "request": {
+    "model": "gpt-4o",
+    "messages": [
+      {
+        "role": "user",
+        "content": "synthetic SSE check"
+      }
+    ],
+    "stream": true
+  },
+  "response": {
+    "status": 400,
+    "headers": {
+      "Cache-Control": "no-cache",
+      "Content-Type": "text/event-stream",
+      "X-Accel-Buffering": "no",
+      "X-New-Api-Version": "v1.0.0-rc.41",
+      "X-Oneapi-Request-Id": "202610080825174436483438268d9d6Jh0pjjOA",
+      "Date": "Thu, 08 Oct 2026 08:25:17 GMT",
+      "Connection": "close",
+      "Transfer-Encoding": "chunked"
+    },
+    "body": "{\"error\":{\"message\":\"synthetic upstream error\",\"type\":\"invalid_request_error\",\"param\":\"\",\"code\":\"synthetic_error\"}}"
+  }
+}

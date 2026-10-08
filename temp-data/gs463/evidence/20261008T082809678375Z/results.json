@@ -1,0 +1,17 @@
+{
+  "8080-missing-nonstream": 500,
+  "8080-missing-stream": 500,
+  "8080-header-nonstream": 200,
+  "8080-header-stream": 200,
+  "8081-missing-nonstream": 200,
+  "8081-missing-stream": 200,
+  "8081-data-nonstream": 200,
+  "8081-data-stream": 200,
+  "8081-json-nonstream": 200,
+  "8081-error-nonstream": 400,
+  "gateway_stream_error_content_type": "text/event-stream",
+  "8081-error-stream": 400,
+  "passthrough-json": "unchanged",
+  "passthrough-error": "unchanged",
+  "passthrough-error-sse": "unchanged"
+}

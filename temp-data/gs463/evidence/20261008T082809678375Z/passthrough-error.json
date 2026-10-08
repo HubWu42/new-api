@@ -1,0 +1,22 @@
+{
+  "direct": {
+    "status": 400,
+    "headers": {
+      "Server": "BaseHTTP/0.6 Python/3.12.10",
+      "Date": "Thu, 08 Oct 2026 08:28:26 GMT",
+      "Content-Type": "application/json",
+      "Content-Length": "104"
+    },
+    "body": "{\"error\":{\"message\":\"synthetic upstream error\",\"type\":\"invalid_request_error\",\"code\":\"synthetic_error\"}}"
+  },
+  "proxy": {
+    "status": 400,
+    "headers": {
+      "Server": "BaseHTTP/0.6 Python/3.12.10",
+      "Date": "Thu, 08 Oct 2026 08:28:26 GMT",
+      "Content-Type": "application/json",
+      "Content-Length": "104"
+    },
+    "body": "{\"error\":{\"message\":\"synthetic upstream error\",\"type\":\"invalid_request_error\",\"code\":\"synthetic_error\"}}"
+  }
+}
