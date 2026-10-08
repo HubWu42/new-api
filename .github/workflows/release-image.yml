@@ -77,6 +77,13 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
+      # Dockerfile 会把仓库根的 VERSION 编进二进制（Go 的 -X common.Version）与前端
+      # （VITE_REACT_APP_VERSION）。仓里那个文件是空的，不写就等于发布产物没有版本号。
+      - name: Write release identity into VERSION
+        env:
+          TAG: ${{ needs.verify.outputs.image_tag }}
+        run: printf '%s' "$TAG" > VERSION
+
       - name: Build and push per-arch image
         uses: docker/build-push-action@v6
         with:
@@ -129,6 +136,21 @@ jobs:
 
           echo "### 镜像" >> "$GITHUB_STEP_SUMMARY"
           docker buildx imagetools inspect "${IMAGE}:${TAG}" >> "$GITHUB_STEP_SUMMARY"
+
+      # 自检：产物里必须真的能搜到本次发布标识，否则这一版不许往正式发布走。
+      - name: Verify the embedded release identity
+        env:
+          TAG: ${{ needs.verify.outputs.image_tag }}
+        run: |
+          set -euo pipefail
+          docker pull --platform linux/amd64 "${IMAGE}:${TAG}-amd64" > /dev/null
+          count=$(docker run --rm --entrypoint /bin/grep "${IMAGE}:${TAG}-amd64" -ac "$TAG" /new-api || true)
+          echo "镜像内嵌版本字符串出现次数：${count}"
+          if [ "${count:-0}" -lt 1 ]; then
+            echo "::error::镜像里搜不到本次发布标识 ${TAG}"
+            exit 1
+          fi
+          echo "- 版本自检通过：镜像内嵌 \`${TAG}\`" >> "$GITHUB_STEP_SUMMARY"
 
   deploy:
     name: Deploy linksail
