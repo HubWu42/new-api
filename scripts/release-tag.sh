@@ -6,14 +6,13 @@ export LC_ALL=C
 fail() { printf 'Error: %s\n' "$*" >&2; exit 1; }
 
 # Parsed values are numeric so October sorts after September on BSD and GNU systems.
+# 解析结果经 stdout 显式返回一行：`<date> <revision> <dry>`（dry 为空即正式 tag）。
 parse_tag() {
   local tag=$1 year month day limit
   [[ $tag =~ ^v([0-9]{4})\.([1-9][0-9]?)\.([1-9][0-9]?)-r([1-9][0-9]{0,2})(-dry\.([1-9][0-9]*))?$ ]] || return 1
   year=$((10#${BASH_REMATCH[1]}))
   month=${BASH_REMATCH[2]}
   day=${BASH_REMATCH[3]}
-  parsed_revision=${BASH_REMATCH[4]}
-  parsed_dry=${BASH_REMATCH[5]}
   (( year > 0 && month <= 12 )) || return 1
   case $month in
     4|6|9|11) limit=30 ;;
@@ -24,7 +23,7 @@ parse_tag() {
     *) limit=31 ;;
   esac
   (( day <= limit )) || return 1
-  parsed_date=$((year * 10000 + month * 100 + day))
+  printf '%s %s %s\n' "$((year * 10000 + month * 100 + day))" "${BASH_REMATCH[4]}" "${BASH_REMATCH[5]}"
 }
 
 load_tags() {
@@ -42,11 +41,9 @@ load_tags() {
 }
 
 check_tag() {
-  local candidate=$1 existing candidate_date candidate_revision candidate_dry
-  parse_tag "$candidate" || fail "Invalid tag: $candidate (use vYYYY.M.D-r1..999, valid date, no leading zeros; optional -dry.N with N >= 1)."
-  candidate_date=$parsed_date
-  candidate_revision=$parsed_revision
-  candidate_dry=$parsed_dry
+  local candidate=$1 existing parsed candidate_date candidate_revision candidate_dry existing_date existing_revision existing_dry
+  parsed=$(parse_tag "$candidate") || fail "Invalid tag: $candidate (use vYYYY.M.D-r1..999, valid date, no leading zeros; optional -dry.N with N >= 1)."
+  read -r candidate_date candidate_revision candidate_dry <<< "$parsed"
   while IFS= read -r existing; do
     # GitHub validates a tag which is already present. The local CLI never excludes it.
     if [[ $existing == "$candidate" ]]; then
@@ -55,11 +52,12 @@ check_tag() {
       fi
       fail "Tag already used: $candidate."
     fi
-    parse_tag "$existing" || continue
+    parsed=$(parse_tag "$existing") || continue
+    read -r existing_date existing_revision existing_dry <<< "$parsed"
     # Dry runs have separate immutable names and do not advance production ordering.
-    [[ -z $candidate_dry && -z $parsed_dry ]] || continue
-    (( candidate_date >= parsed_date )) || fail "Release date is earlier than existing formal tag: $existing."
-    if (( candidate_date == parsed_date && candidate_revision <= parsed_revision )); then
+    [[ -z $candidate_dry && -z $existing_dry ]] || continue
+    (( candidate_date >= existing_date )) || fail "Release date is earlier than existing formal tag: $existing."
+    if (( candidate_date == existing_date && candidate_revision <= existing_revision )); then
       fail "Same-day revision must increase beyond existing formal tag: $existing."
     fi
   done <<< "$all_tags"
@@ -70,7 +68,7 @@ case $mode in
   create) (( $# == 0 )) || fail 'Usage: release-tag.sh [--dry | --check <tag>]' ;;
   --dry) (( $# == 1 )) || fail 'Usage: release-tag.sh --dry' ;;
   --check) (( $# == 2 )) || fail 'Usage: release-tag.sh --check <tag>'
-    parse_tag "$2" || fail "Invalid tag: $2 (use vYYYY.M.D-r1..999, valid date, no leading zeros; optional -dry.N with N >= 1)."
+    parse_tag "$2" > /dev/null || fail "Invalid tag: $2 (use vYYYY.M.D-r1..999, valid date, no leading zeros; optional -dry.N with N >= 1)."
     ;;
   *) fail 'Usage: release-tag.sh [--dry | --check <tag>]' ;;
 esac
@@ -82,13 +80,14 @@ if [[ $mode == --check ]]; then
 fi
 
 today=$(TZ=Asia/Shanghai date +'%Y.%-m.%-d')
-parse_tag "v$today-r1" || fail 'Cannot determine the Beijing release date.'
-today_number=$parsed_date
+today_parsed=$(parse_tag "v$today-r1") || fail 'Cannot determine the Beijing release date.'
+read -r today_number _ _ <<< "$today_parsed"
 revision=0
 while IFS= read -r existing; do
-  parse_tag "$existing" || continue
-  [[ -z $parsed_dry ]] || continue
-  if (( parsed_date == today_number && parsed_revision > revision )); then revision=$parsed_revision; fi
+  parsed=$(parse_tag "$existing") || continue
+  read -r existing_date existing_revision existing_dry <<< "$parsed"
+  [[ -z $existing_dry ]] || continue
+  if (( existing_date == today_number && existing_revision > revision )); then revision=$existing_revision; fi
 done <<< "$all_tags"
 (( revision < 999 )) || fail "All revisions for $today are exhausted (maximum r999)."
 tag="v$today-r$((revision + 1))"
