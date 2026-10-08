@@ -121,17 +121,11 @@ jobs:
             "${IMAGE}:${TAG}-amd64" "${IMAGE}:${TAG}-arm64"
 
           # 部署指针只在正式发布时刷新；干跑只留自己的日期 tag。
-          #
-          # linksail 是 Coolify 的 compose 型 service，它的 compose 现在引的是
-          # `hubwu42/new-api:custom`（历史遗留的指针名）；service 的 compose 改不了
-          # （API 面不提供，只能走面板），所以这里继续刷新这个指针，让部署一步到位。
-          # 想换成 `latest`：在面板把 compose 的镜像行改成 `hubwu42/new-api:latest`，
-          # 再把下面这行删掉、并同时改 docs/deploy.md。
+          # 指针就一个 `latest`；linksail 那边的 application 会按本次发布把
+          # docker_registry_image_tag 钉到具体日期 tag，`latest` 只作人肉拉取用。
           if [ "$IS_DRY" != "true" ]; then
-            for pointer in latest custom; do
-              docker buildx imagetools create -t "${IMAGE}:${pointer}" \
-                "${IMAGE}:${TAG}-amd64" "${IMAGE}:${TAG}-arm64"
-            done
+            docker buildx imagetools create -t "${IMAGE}:latest" \
+              "${IMAGE}:${TAG}-amd64" "${IMAGE}:${TAG}-arm64"
           fi
 
           echo "### 镜像" >> "$GITHUB_STEP_SUMMARY"
@@ -173,13 +167,22 @@ jobs:
             echo "> :warning: deploy 跳过：Coolify 凭据未配齐 —— 部署还没接好。" >> "$GITHUB_STEP_SUMMARY"
           fi
 
-      - name: Trigger Coolify deploy
+      - name: Pin the release on Coolify and deploy
         if: steps.gate.outputs.ready == 'true'
         run: |
           set -euo pipefail
-          # linksail 是 compose 型 service，镜像由它的 compose 指向 latest；
-          # /api/v1/deploy 会让 Coolify 重新拉取并重建（只收 POST，GET 返 405）。
-          out=$(curl -fsS -X POST -H "Authorization: Bearer ${COOLIFY_TOKEN}" \
+          auth=(-H "Authorization: Bearer ${COOLIFY_TOKEN}" -H "Accept: application/json")
+
+          # linksail 是 Docker Image 型 application：先把镜像 tag 钉到本次发布，
+          # 再触发部署。这条路径 Coolify 会按 docker_registry_image_tag 真的去拉取；
+          # compose 型 service 做不到这一点（它只在本地镜像里找，2026-08-03 那次
+          # 就是重建了容器却还跑旧镜像）。
+          curl -fsS -X PATCH "${auth[@]}" -H 'Content-Type: application/json' \
+            "${COOLIFY_URL}/api/v1/applications/${COOLIFY_APP_UUID}" \
+            --data "{\"docker_registry_image_tag\":\"${{ needs.verify.outputs.image_tag }}\"}"
+
+          # /api/v1/deploy 只收 POST（GET 返 405）。
+          out=$(curl -fsS -X POST "${auth[@]}" \
             "${COOLIFY_URL}/api/v1/deploy?uuid=${COOLIFY_APP_UUID}&force=false")
           echo "$out"
-          echo "- 已触发 Coolify 部署：\`$out\`" >> "$GITHUB_STEP_SUMMARY"
+          echo "- 已钉版本 \`${{ needs.verify.outputs.image_tag }}\` 并触发部署" >> "$GITHUB_STEP_SUMMARY"
