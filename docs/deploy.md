@@ -33,6 +33,7 @@ linksail 在 Coolify 里是 **compose 型 service**，不是 application——�
 
 - compose 的镜像行指向 `hubwu42/new-api:latest`：`latest` 是**部署指针**，每次发布刷新它。
 - 发布 workflow 每次推两个镜像 tag：`hubwu42/new-api:<日期>-rN`（不可变，追踪与回滚用）和 `hubwu42/new-api:latest`（指针）。
+- 版本内嵌：构建 job 会把本次发布标识写进仓库根的 `VERSION`（Go 的 `-X common.Version` 与前端 `VITE_REACT_APP_VERSION` 都读它），manifest job 再自检一次——镜像里搜不到该标识就整条失败，不会进正式发布。所以 `/api/status` 的 version 应当等于发布标识（去掉前导 `v`）。
 - 上线：镜像推完之后 `POST /api/v1/deploy?uuid=<uuid>&force=false`，Coolify 重新拉 `latest` 并重建容器。
 
 ```bash
