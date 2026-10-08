@@ -7,6 +7,7 @@
 - `origin` 是 `HubWu42/new-api`；`upstream` 是 `QuantumNous/new-api`。`upstream/main` 只跟随官方，不承载我们的修改。
 - 默认分支与合并目标都是 `main`。它保存官方基线与我们必要的修改；不再以 `custom` 作为开发或发布分支。旧 `custom` 要在发布链干跑通过后删除，恢复线上靠保留的镜像，不靠重建该分支。
 - 任务分支命名沿用 `feat/GS-<号>-<短描述>` 或 `fix/GS-<号>-<短描述>`，有父任务时使用父任务号。从 `origin/main` 建 worktree，改动经 PR 合入 `main`；主工作区仅快进更新。
+- 本仓**不放 Fleet 的临时工作文件**：执行期的日志、盘点、证据放 issue 评论或仓外的作业目录（`temp-data/` 已在 `.gitignore` 里）。这个仓是上游项目的公开 fork，临时件会公开可见，也会随每次跟上游 merge 一直留着。
 - 上游更新由人选择时机，手动 merge，不 rebase、不强制覆盖我们的历史。在任务 worktree 的分支执行：
 
 ```bash

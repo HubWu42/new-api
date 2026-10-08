@@ -44,3 +44,6 @@ relaykit/relayconvert/chat_responses_live_local_test.go
 service/openaicompat/chat_responses_live_local_test.go
 go.work
 go.work.sum
+
+# Fleet 的临时工作文件（执行产出放 issue 或仓外作业目录，不进本仓）
+temp-data/
