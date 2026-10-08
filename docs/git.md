@@ -21,7 +21,7 @@ git merge-base --is-ancestor upstream/main HEAD
 
 ## 日期 tag 与脚本接口
 
-发布入口固定为 `scripts/release-tag.sh`，工作流固定为 `.github/workflows/release-image.yml`。实现按本文件来，改了名字要同步改这里。这里定义后续实现应遵守的接口，不代表脚本与工作流已经可运行。
+发布入口固定为 `scripts/release-tag.sh`，工作流固定为 `.github/workflows/release-image.yml`。实现按本文件来，改了名字要同步改这里。脚本与工作流已按本文件实现并跑通：2026-10-08 起线上镜像由这条链产出（首版 `2026.10.8-r2`）。
 
 - 日期按 `Asia/Shanghai`（北京时间）。Git tag 是 `v年.月.日-r当日序号`，例如 `v2026.10.8-r1`；月、日不带前导零，序号为从 `r1` 起的正整数。
 - 镜像 tag 去掉开头的 `v`，例如 `2026.10.8-r1`。这是我们的发布标识，不改上游的版本号方案。
