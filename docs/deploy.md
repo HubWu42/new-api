@@ -21,9 +21,11 @@
 
 推送 [git.md](git.md) 约定的日期 tag 后，workflow 按顺序运行：校验 tag → 构建两个架构 → 推送 Docker Hub（日期 tag 与 `latest` 两个）→ 触发 Coolify 部署。镜像尚未推送成功时，不更新 Coolify。
 
-例如 Git tag `v2026.10.8-r1` 对应 `hubwu42/new-api:2026.10.8-r1`，同一次构建也刷新部署指针 `hubwu42/new-api:latest`。生产跟的是 `latest` 指针，具体版本由不可变的日期 tag 与 Coolify 记下的镜像 digest 一起锁定；正因指针可变，回滚不靠它的当前指向，靠把上一版日期 tag 的镜像重新打成 `latest`。正式 tag 推送前要由人确认，因为它会触发生产部署。
+例如 Git tag `v2026.10.8-r1` 对应 `hubwu42/new-api:2026.10.8-r1`，同一次构建另刷一个 `latest` 指针，**只作人肉拉取用**。生产跟的不是它：部署时把 `docker_registry_image_tag` 钉到本次那个不可变的日期 tag（见下面〈部署〉一节），所以线上跑的是哪一版一眼可查，回滚也只是把钉住的 tag 换成上一版（见〈回滚〉）。正式 tag 推送前要由人确认，因为它会触发生产部署。
 
 `v2026.10.8-r1-dry.1` 对应 `hubwu42/new-api:2026.10.8-r1-dry.1`；干跑会构建、推送镜像，但必须跳过全部 Coolify 写操作。本地 `bash scripts/release-tag.sh --dry` 仅预览版本，不触发这条远端流程。
+
+- 版本内嵌：构建 job 先把本次发布标识写进仓库根的 `VERSION`（Go 的 `-X common.Version` 与前端 `VITE_REACT_APP_VERSION` 都读它），manifest job 再在镜像里搜一遍该标识——搜不到就整条失败，这一版不许进正式发布。所以 `/api/status` 的 `version` 应当等于发布标识（去掉前导 `v`）。
 
 仓库 secrets `COOLIFY_TOKEN` 与 `COOLIFY_APP_UUID` 提供部署凭据及目标；`COOLIFY_APP_UUID` 应配置为上表 UUID。缺任一项，跳过部署并明确写入工作流日志或 summary，镜像发布仍可成功。因此绿色 workflow 不代表已经上线；部署步骤若实际执行后出错，应报告失败，不能当作缺凭据跳过。Docker Hub 的推送凭据通过 Actions secrets 提供，令牌不写入仓库或日志。
 
