@@ -1,6 +1,6 @@
 name: Release image (date tag)
 
-# 日期 tag 触发：校验 → 多架构构建 → 推 Docker Hub（日期 tag + 部署指针 latest）→ 触发 Coolify 部署。
+# 日期 tag 触发：校验 → 多架构构建 → 推 Docker Hub（不可变的日期 tag，另刷一个只作人肉拉取用的 latest）→ 钉住本版并触发 Coolify 部署。
 # 约定与调用见 docs/git.md 与 docs/deploy.md，实现与它们保持一致。
 on:
   push:
