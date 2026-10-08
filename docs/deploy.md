@@ -15,7 +15,7 @@
 | 发布脚本 | `scripts/release-tag.sh` |
 | 发布 workflow | `.github/workflows/release-image.yml` |
 
-实现按本文件来，改了名字要同步改这里。这份文档先定义发布接口，脚本与 workflow 按约定实现后再执行发布。
+实现按本文件来，改了名字要同步改这里。脚本与 workflow 已按本文件实现并跑通，2026-10-08 起线上镜像由这条链产出（首版 `2026.10.8-r2`）。
 
 ## 发布顺序与凭据
 
