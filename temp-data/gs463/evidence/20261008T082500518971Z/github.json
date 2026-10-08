@@ -1,0 +1,25 @@
+{
+  "latest_stable": {
+    "source": "https://api.github.com/repos/QuantumNous/new-api/releases/latest",
+    "tag_name": "v1.0.0-rc.41",
+    "published_at": "2026-09-30T13:09:14Z",
+    "prerelease": false,
+    "html_url": "https://github.com/QuantumNous/new-api/releases/tag/v1.0.0-rc.41"
+  },
+  "releases": {
+    "source": "https://api.github.com/repos/QuantumNous/new-api/releases?per_page=100",
+    "tag_name": "v1.0.0-rc.41",
+    "published_at": "2026-09-30T13:09:14Z",
+    "prerelease": false,
+    "html_url": "https://github.com/QuantumNous/new-api/releases/tag/v1.0.0-rc.41"
+  },
+  "pr6254": {
+    "source": "https://api.github.com/repos/QuantumNous/new-api/pulls/6254",
+    "state": "open",
+    "merged": false,
+    "merged_at": null,
+    "html_url": "https://github.com/QuantumNous/new-api/pull/6254",
+    "title": "fix(relay): detect upstream SSE when Content-Type header is missing (fixes #6075)"
+  },
+  "checked_at_utc": "2026-10-08T08:25:49.841700+00:00"
+}

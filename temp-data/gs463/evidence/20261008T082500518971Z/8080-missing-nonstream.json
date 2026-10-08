@@ -1,0 +1,24 @@
+{
+  "request": {
+    "model": "gpt-4o",
+    "messages": [
+      {
+        "role": "user",
+        "content": "synthetic SSE check"
+      }
+    ],
+    "stream": false
+  },
+  "response": {
+    "status": 500,
+    "headers": {
+      "Content-Type": "application/json; charset=utf-8",
+      "X-New-Api-Version": "v1.0.0-rc.41",
+      "X-Oneapi-Request-Id": "202610080825049659887968268d9d6y3ayzdez",
+      "Date": "Thu, 08 Oct 2026 08:25:05 GMT",
+      "Content-Length": "141",
+      "Connection": "close"
+    },
+    "body": "{\"error\":{\"message\":\"invalid character 'e' looking for beginning of value\",\"type\":\"bad_response_body\",\"param\":\"\",\"code\":\"bad_response_body\"}}"
+  }
+}

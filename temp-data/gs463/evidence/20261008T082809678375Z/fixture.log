@@ -1,0 +1,17 @@
+{"path": "/missing/v1/responses", "request": {"model": "gpt-4o", "input": [{"content": "synthetic SSE check", "role": "user"}], "stream": false}}
+{"path": "/missing/v1/responses", "request": {"model": "gpt-4o", "input": [{"content": "synthetic SSE check", "role": "user"}], "stream": true}}
+{"path": "/header/v1/responses", "request": {"model": "gpt-4o", "input": [{"content": "synthetic SSE check", "role": "user"}], "stream": false}}
+{"path": "/header/v1/responses", "request": {"model": "gpt-4o", "input": [{"content": "synthetic SSE check", "role": "user"}], "stream": true}}
+{"path": "/missing/v1/responses", "request": {"model": "gpt-4o", "input": [{"content": "synthetic SSE check", "role": "user"}], "stream": false}}
+{"path": "/missing/v1/responses", "request": {"model": "gpt-4o", "input": [{"content": "synthetic SSE check", "role": "user"}], "stream": true}}
+{"path": "/data/v1/responses", "request": {"model": "gpt-4o", "input": [{"content": "synthetic SSE check", "role": "user"}], "stream": false}}
+{"path": "/data/v1/responses", "request": {"model": "gpt-4o", "input": [{"content": "synthetic SSE check", "role": "user"}], "stream": true}}
+{"path": "/json/v1/responses", "request": {"model": "gpt-4o", "input": [{"content": "synthetic SSE check", "role": "user"}], "stream": false}}
+{"path": "/error/v1/responses", "request": {"model": "gpt-4o", "input": [{"content": "synthetic SSE check", "role": "user"}], "stream": false}}
+{"path": "/error/v1/responses", "request": {"model": "gpt-4o", "input": [{"content": "synthetic SSE check", "role": "user"}], "stream": true}}
+{"path": "/json/responses", "request": {}}
+{"path": "/json/responses", "request": {}}
+{"path": "/error/responses", "request": {}}
+{"path": "/error/responses", "request": {}}
+{"path": "/error-sse/responses", "request": {}}
+{"path": "/error-sse/responses", "request": {}}

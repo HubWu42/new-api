@@ -1,0 +1,251 @@
+[SYS] 2026/10/08 - 08:25:01 | initializing token encoders 
+[SYS] 2026/10/08 - 08:25:01 | token encoders initialized 
+[SYS] 2026/10/08 - 08:25:01 | using PostgreSQL as database 
+[SYS] 2026/10/08 - 08:25:01 | database migration started 
+[SYS] 2026/10/08 - 08:25:01 | system is not initialized and no root user exists 
+[SYS] 2026/10/08 - 08:25:01 | SYNC_FREQUENCY not set, use default value 60 
+[SYS] 2026/10/08 - 08:25:01 | Redis is enabled 
+[SYS] 2026/10/08 - 08:25:01 | i18n initialized with languages: zh-CN, zh-TW, en 
+[SYS] 2026/10/08 - 08:25:01 | Loaded 0 custom OAuth providers 
+[SYS] 2026/10/08 - 08:25:01 | New API v1.0.0-rc.41 started 
+[SYS] 2026/10/08 - 08:25:01 | memory cache enabled 
+[SYS] 2026/10/08 - 08:25:01 | sync frequency: 60 seconds 
+[SYS] 2026/10/08 - 08:25:01 | channels synced from database 
+[SYS] 2026/10/08 - 08:25:01 | 正在更新数据看板数据... 
+[SYS] 2026/10/08 - 08:25:01 | 保存数据看板数据成功，共保存0条数据 
+[INFO] 2026/10/08 - 08:25:01 | SYSTEM | codex credential auto-refresh task started: tick=10m0s threshold=24h0m0s 
+[INFO] 2026/10/08 - 08:25:01 | SYSTEM | subscription quota reset task started: tick=1m0s 
+[INFO] 2026/10/08 - 08:25:01 | SYSTEM | system task runner started: runner=313cbf22e1af-FNlnBdfv idle_interval=15s 
+
+  [33mWarning: Refresh cookie is not secure and refresh/logout Origin validation is disabled. Please set SESSION_COOKIE_SECURE=true in production.[0m
+
+
+  [32mNew API v1.0.0-rc.41[0m  ready in 388 ms
+
+  ➜  [1mNetwork:[0m http://172.26.0.5:3000/
+
+[GIN] 2026/10/08 - 08:25:02 | api | 202610080825023975106698268d9d60O6U9vto | 200 |    3.437791ms |      172.26.0.1 |     GET /api/status
+[GIN] 2026/10/08 - 08:25:02 | api | 202610080825024035322538268d9d6lv3V9M6x | 200 |   38.722584ms |      172.26.0.1 |    POST /api/setup
+[SYS] 2026/10/08 - 08:25:02 | received signal: terminated, shutting down... 
+[SYS] 2026/10/08 - 08:25:02 | 保存数据看板数据成功，共保存0条数据 
+[SYS] 2026/10/08 - 08:25:02 | server exited 
+[SYS] 2026/10/08 - 08:25:03 | initializing token encoders 
+[SYS] 2026/10/08 - 08:25:03 | token encoders initialized 
+[SYS] 2026/10/08 - 08:25:03 | using PostgreSQL as database 
+[SYS] 2026/10/08 - 08:25:03 | database migration started 
+[SYS] 2026/10/08 - 08:25:04 | system is already initialized at: 2026-10-08 08:25:02 +0000 UTC 
+[SYS] 2026/10/08 - 08:25:04 | SYNC_FREQUENCY not set, use default value 60 
+[SYS] 2026/10/08 - 08:25:04 | Redis is enabled 
+[SYS] 2026/10/08 - 08:25:04 | i18n initialized with languages: zh-CN, zh-TW, en 
+[SYS] 2026/10/08 - 08:25:04 | Loaded 0 custom OAuth providers 
+[SYS] 2026/10/08 - 08:25:04 | New API v1.0.0-rc.41 started 
+[SYS] 2026/10/08 - 08:25:04 | memory cache enabled 
+[SYS] 2026/10/08 - 08:25:04 | sync frequency: 60 seconds 
+[SYS] 2026/10/08 - 08:25:04 | channels synced from database 
+[SYS] 2026/10/08 - 08:25:04 | 正在更新数据看板数据... 
+[SYS] 2026/10/08 - 08:25:04 | 保存数据看板数据成功，共保存0条数据 
+[INFO] 2026/10/08 - 08:25:04 | SYSTEM | codex credential auto-refresh task started: tick=10m0s threshold=24h0m0s 
+[INFO] 2026/10/08 - 08:25:04 | SYSTEM | subscription quota reset task started: tick=1m0s 
+[INFO] 2026/10/08 - 08:25:04 | SYSTEM | system task runner started: runner=313cbf22e1af-MBb3KIoR idle_interval=15s 
+
+  [33mWarning: Refresh cookie is not secure and refresh/logout Origin validation is disabled. Please set SESSION_COOKIE_SECURE=true in production.[0m
+
+
+  [32mNew API v1.0.0-rc.41[0m  ready in 1157 ms
+
+  ➜  [1mNetwork:[0m http://172.26.0.5:3000/
+
+[GIN] 2026/10/08 - 08:25:04 | api | 202610080825049597745468268d9d6dt96o9IP | 200 |    3.631291ms |      172.26.0.1 |     GET /api/status
+[INFO] 2026/10/08 - 08:25:04 | 202610080825049659887968268d9d6y3ayzdez | 用户 1 需要预扣费 ＄0.000024 (funding=wallet) 
+[INFO] 2026/10/08 - 08:25:05 | 202610080825049659887968268d9d6y3ayzdez | 用户 1 请求失败, 返还预扣费（token_quota=＄0.000024, funding=wallet） 
+[GIN] 2026/10/08 - 08:25:05 | relay | 202610080825049659887968268d9d6y3ayzdez | 500 |   51.800084ms |      172.26.0.1 |    POST /v1/chat/completions
+[INFO] 2026/10/08 - 08:25:05 | 202610080825050205713798268d9d6WAnrEty7 | 用户 1 需要预扣费 ＄0.000024 (funding=wallet) 
+[INFO] 2026/10/08 - 08:25:05 | 202610080825050205713798268d9d6WAnrEty7 | 用户 1 请求失败, 返还预扣费（token_quota=＄0.000024, funding=wallet） 
+[GIN] 2026/10/08 - 08:25:05 | relay | 202610080825050205713798268d9d6WAnrEty7 | 500 |    3.806791ms |      172.26.0.1 |    POST /v1/chat/completions
+[SYS] 2026/10/08 - 08:25:05 | received signal: terminated, shutting down... 
+[SYS] 2026/10/08 - 08:25:05 | 保存数据看板数据成功，共保存0条数据 
+[SYS] 2026/10/08 - 08:25:05 | server exited 
+[SYS] 2026/10/08 - 08:25:05 | initializing token encoders 
+[SYS] 2026/10/08 - 08:25:05 | token encoders initialized 
+[SYS] 2026/10/08 - 08:25:05 | using PostgreSQL as database 
+[SYS] 2026/10/08 - 08:25:05 | database migration started 
+[SYS] 2026/10/08 - 08:25:06 | system is already initialized at: 2026-10-08 08:25:02 +0000 UTC 
+[SYS] 2026/10/08 - 08:25:06 | SYNC_FREQUENCY not set, use default value 60 
+[SYS] 2026/10/08 - 08:25:06 | Redis is enabled 
+[SYS] 2026/10/08 - 08:25:06 | i18n initialized with languages: zh-CN, zh-TW, en 
+[SYS] 2026/10/08 - 08:25:06 | Loaded 0 custom OAuth providers 
+[SYS] 2026/10/08 - 08:25:06 | New API v1.0.0-rc.41 started 
+[SYS] 2026/10/08 - 08:25:06 | memory cache enabled 
+[SYS] 2026/10/08 - 08:25:06 | sync frequency: 60 seconds 
+[SYS] 2026/10/08 - 08:25:06 | channels synced from database 
+[SYS] 2026/10/08 - 08:25:06 | 正在更新数据看板数据... 
+[SYS] 2026/10/08 - 08:25:06 | 保存数据看板数据成功，共保存0条数据 
+[INFO] 2026/10/08 - 08:25:06 | SYSTEM | codex credential auto-refresh task started: tick=10m0s threshold=24h0m0s 
+[INFO] 2026/10/08 - 08:25:06 | SYSTEM | subscription quota reset task started: tick=1m0s 
+[INFO] 2026/10/08 - 08:25:06 | SYSTEM | system task runner started: runner=313cbf22e1af-5krI6hNr idle_interval=15s 
+
+  [33mWarning: Refresh cookie is not secure and refresh/logout Origin validation is disabled. Please set SESSION_COOKIE_SECURE=true in production.[0m
+
+
+  [32mNew API v1.0.0-rc.41[0m  ready in 1187 ms
+
+  ➜  [1mNetwork:[0m http://172.26.0.5:3000/
+
+[GIN] 2026/10/08 - 08:25:07 | api | 202610080825074584990888268d9d6WCWy25cl | 200 |    4.319416ms |      172.26.0.1 |     GET /api/status
+[INFO] 2026/10/08 - 08:25:07 | 202610080825074725918388268d9d6Mwmce8CX | 用户 1 需要预扣费 ＄0.000024 (funding=wallet) 
+[INFO] 2026/10/08 - 08:25:07 | 202610080825075277863388268d9d6Tqp7mwQr | 用户 1 需要预扣费 ＄0.000024 (funding=wallet) 
+[INFO] 2026/10/08 - 08:25:07 | 202610080825074725918388268d9d6Mwmce8CX | 预扣费后补扣费：＄0.000016（实际消耗：＄0.000040，预扣费：＄0.000024） 
+[INFO] 2026/10/08 - 08:25:07 | 202610080825074725918388268d9d6Mwmce8CX | record consume log: userId=1, params={"channel_id":1,"prompt_tokens":10,"completion_tokens":5,"model_name":"gpt-4o","token_name":"synthetic","quota":20,"content":"","token_id":1,"use_time_seconds":0,"is_stream":false,"group":"default","other":{"admin_info":{"request_policy":[{"attempt":1,"channel_id":1,"group":"default","elapsed_ms":25,"decision":{"action":"attempt","reason":"channel_selected","source":"routing"}},{"attempt":1,"channel_id":1,"group":"default","elapsed_ms":51,"decision":{"action":"stop","reason":"stream_not_successful","source":"system"}}],"usage_billing_path":"billing-usage-openai","use_channel":["1"]},"billing_source":"wallet","cache_ratio":0.5,"cache_tokens":0,"completion_ratio":2,"frt":-1000,"group_ratio":1,"input_tokens_total":10,"model_price":-1,"model_ratio":1,"request_conversion":["OpenAI Compatible","OpenAI Responses"],"request_path":"/v1/chat/completions","user_group_ratio":-1}} 
+[INFO] 2026/10/08 - 08:25:07 | 202610080825075277863388268d9d6Tqp7mwQr | stream ended: reason=eof 
+[GIN] 2026/10/08 - 08:25:07 | relay | 202610080825074725918388268d9d6Mwmce8CX | 200 |   65.491709ms |      172.26.0.1 |    POST /v1/chat/completions
+[INFO] 2026/10/08 - 08:25:07 | 202610080825075277863388268d9d6Tqp7mwQr | 预扣费后补扣费：＄0.000016（实际消耗：＄0.000040，预扣费：＄0.000024） 
+[INFO] 2026/10/08 - 08:25:07 | 202610080825075277863388268d9d6Tqp7mwQr | record consume log: userId=1, params={"channel_id":1,"prompt_tokens":10,"completion_tokens":5,"model_name":"gpt-4o","token_name":"synthetic","quota":20,"content":"","token_id":1,"use_time_seconds":0,"is_stream":true,"group":"default","other":{"admin_info":{"request_policy":[{"attempt":1,"channel_id":1,"group":"default","elapsed_ms":1,"decision":{"action":"attempt","reason":"channel_selected","source":"routing"}},{"attempt":1,"channel_id":1,"group":"default","elapsed_ms":11,"decision":{"action":"success","reason":"request_completed","source":"upstream"}}],"usage_billing_path":"billing-usage-openai","use_channel":["1"]},"billing_source":"wallet","cache_ratio":0.5,"cache_tokens":0,"completion_ratio":2,"frt":4,"group_ratio":1,"input_tokens_total":10,"model_price":-1,"model_ratio":1,"request_conversion":["OpenAI Compatible","OpenAI Responses"],"request_path":"/v1/chat/completions","stream_status":{"end_reason":"eof","status":"ok"},"user_group_ratio":-1}} 
+[GIN] 2026/10/08 - 08:25:07 | relay | 202610080825075277863388268d9d6Tqp7mwQr | 200 |   12.778834ms |      172.26.0.1 |    POST /v1/chat/completions
+[SYS] 2026/10/08 - 08:25:07 | received signal: terminated, shutting down... 
+[SYS] 2026/10/08 - 08:25:07 | 保存数据看板数据成功，共保存1条数据 
+[SYS] 2026/10/08 - 08:25:07 | server exited 
+[SYS] 2026/10/08 - 08:25:08 | initializing token encoders 
+[SYS] 2026/10/08 - 08:25:08 | token encoders initialized 
+[SYS] 2026/10/08 - 08:25:08 | using PostgreSQL as database 
+[SYS] 2026/10/08 - 08:25:08 | database migration started 
+[SYS] 2026/10/08 - 08:25:09 | system is already initialized at: 2026-10-08 08:25:02 +0000 UTC 
+[SYS] 2026/10/08 - 08:25:09 | SYNC_FREQUENCY not set, use default value 60 
+[SYS] 2026/10/08 - 08:25:09 | Redis is enabled 
+[SYS] 2026/10/08 - 08:25:09 | i18n initialized with languages: zh-CN, zh-TW, en 
+[SYS] 2026/10/08 - 08:25:09 | Loaded 0 custom OAuth providers 
+[SYS] 2026/10/08 - 08:25:09 | New API v1.0.0-rc.41 started 
+[SYS] 2026/10/08 - 08:25:09 | memory cache enabled 
+[SYS] 2026/10/08 - 08:25:09 | sync frequency: 60 seconds 
+[SYS] 2026/10/08 - 08:25:09 | channels synced from database 
+[SYS] 2026/10/08 - 08:25:09 | 正在更新数据看板数据... 
+[SYS] 2026/10/08 - 08:25:09 | 保存数据看板数据成功，共保存0条数据 
+[INFO] 2026/10/08 - 08:25:09 | SYSTEM | codex credential auto-refresh task started: tick=10m0s threshold=24h0m0s 
+[INFO] 2026/10/08 - 08:25:09 | SYSTEM | subscription quota reset task started: tick=1m0s 
+[INFO] 2026/10/08 - 08:25:09 | SYSTEM | system task runner started: runner=313cbf22e1af-xK6TUmvo idle_interval=15s 
+
+  [33mWarning: Refresh cookie is not secure and refresh/logout Origin validation is disabled. Please set SESSION_COOKIE_SECURE=true in production.[0m
+
+
+  [32mNew API v1.0.0-rc.41[0m  ready in 1142 ms
+
+  ➜  [1mNetwork:[0m http://172.26.0.5:3000/
+
+[GIN] 2026/10/08 - 08:25:09 | api | 202610080825099379642568268d9d6bL3NH1ZE | 200 |    3.207541ms |      172.26.0.1 |     GET /api/status
+[INFO] 2026/10/08 - 08:25:09 | 202610080825099453867158268d9d6IlFuzhF0 | 用户 1 需要预扣费 ＄0.000024 (funding=wallet) 
+[INFO] 2026/10/08 - 08:25:10 | 202610080825099988680488268d9d6VN02aoxD | 用户 1 需要预扣费 ＄0.000024 (funding=wallet) 
+[INFO] 2026/10/08 - 08:25:10 | 202610080825099453867158268d9d6IlFuzhF0 | 预扣费后补扣费：＄0.000016（实际消耗：＄0.000040，预扣费：＄0.000024） 
+[INFO] 2026/10/08 - 08:25:10 | 202610080825099453867158268d9d6IlFuzhF0 | record consume log: userId=1, params={"channel_id":1,"prompt_tokens":10,"completion_tokens":5,"model_name":"gpt-4o","token_name":"synthetic","quota":20,"content":"","token_id":1,"use_time_seconds":0,"is_stream":false,"group":"default","other":{"admin_info":{"request_policy":[{"attempt":1,"channel_id":1,"group":"default","elapsed_ms":24,"decision":{"action":"attempt","reason":"channel_selected","source":"routing"}},{"attempt":1,"channel_id":1,"group":"default","elapsed_ms":50,"decision":{"action":"stop","reason":"stream_not_successful","source":"system"}}],"usage_billing_path":"billing-usage-openai","use_channel":["1"]},"billing_source":"wallet","cache_ratio":0.5,"cache_tokens":0,"completion_ratio":2,"frt":-1000,"group_ratio":1,"input_tokens_total":10,"model_price":-1,"model_ratio":1,"request_conversion":["OpenAI Compatible","OpenAI Responses"],"request_path":"/v1/chat/completions","user_group_ratio":-1}} 
+[GIN] 2026/10/08 - 08:25:10 | relay | 202610080825099453867158268d9d6IlFuzhF0 | 200 |   62.910208ms |      172.26.0.1 |    POST /v1/chat/completions
+[INFO] 2026/10/08 - 08:25:10 | 202610080825099988680488268d9d6VN02aoxD | stream ended: reason=eof 
+[INFO] 2026/10/08 - 08:25:10 | 202610080825099988680488268d9d6VN02aoxD | 预扣费后补扣费：＄0.000016（实际消耗：＄0.000040，预扣费：＄0.000024） 
+[INFO] 2026/10/08 - 08:25:10 | 202610080825099988680488268d9d6VN02aoxD | record consume log: userId=1, params={"channel_id":1,"prompt_tokens":10,"completion_tokens":5,"model_name":"gpt-4o","token_name":"synthetic","quota":20,"content":"","token_id":1,"use_time_seconds":1,"is_stream":true,"group":"default","other":{"admin_info":{"request_policy":[{"attempt":1,"channel_id":1,"group":"default","elapsed_ms":2,"decision":{"action":"attempt","reason":"channel_selected","source":"routing"}},{"attempt":1,"channel_id":1,"group":"default","elapsed_ms":11,"decision":{"action":"success","reason":"request_completed","source":"upstream"}}],"usage_billing_path":"billing-usage-openai","use_channel":["1"]},"billing_source":"wallet","cache_ratio":0.5,"cache_tokens":0,"completion_ratio":2,"frt":5,"group_ratio":1,"input_tokens_total":10,"model_price":-1,"model_ratio":1,"request_conversion":["OpenAI Compatible","OpenAI Responses"],"request_path":"/v1/chat/completions","stream_status":{"end_reason":"eof","status":"ok"},"user_group_ratio":-1}} 
+[GIN] 2026/10/08 - 08:25:10 | relay | 202610080825099988680488268d9d6VN02aoxD | 200 |     12.5765ms |      172.26.0.1 |    POST /v1/chat/completions
+[SYS] 2026/10/08 - 08:25:10 | received signal: terminated, shutting down... 
+[SYS] 2026/10/08 - 08:25:10 | 保存数据看板数据成功，共保存1条数据 
+[SYS] 2026/10/08 - 08:25:10 | server exited 
+[SYS] 2026/10/08 - 08:25:10 | initializing token encoders 
+[SYS] 2026/10/08 - 08:25:10 | token encoders initialized 
+[SYS] 2026/10/08 - 08:25:10 | using PostgreSQL as database 
+[SYS] 2026/10/08 - 08:25:10 | database migration started 
+[SYS] 2026/10/08 - 08:25:11 | system is already initialized at: 2026-10-08 08:25:02 +0000 UTC 
+[SYS] 2026/10/08 - 08:25:11 | SYNC_FREQUENCY not set, use default value 60 
+[SYS] 2026/10/08 - 08:25:11 | Redis is enabled 
+[SYS] 2026/10/08 - 08:25:11 | i18n initialized with languages: zh-CN, zh-TW, en 
+[SYS] 2026/10/08 - 08:25:11 | Loaded 0 custom OAuth providers 
+[SYS] 2026/10/08 - 08:25:11 | New API v1.0.0-rc.41 started 
+[SYS] 2026/10/08 - 08:25:11 | memory cache enabled 
+[SYS] 2026/10/08 - 08:25:11 | sync frequency: 60 seconds 
+[SYS] 2026/10/08 - 08:25:11 | channels synced from database 
+[SYS] 2026/10/08 - 08:25:11 | 正在更新数据看板数据... 
+[SYS] 2026/10/08 - 08:25:11 | 保存数据看板数据成功，共保存0条数据 
+[INFO] 2026/10/08 - 08:25:11 | SYSTEM | codex credential auto-refresh task started: tick=10m0s threshold=24h0m0s 
+[INFO] 2026/10/08 - 08:25:11 | SYSTEM | subscription quota reset task started: tick=1m0s 
+[INFO] 2026/10/08 - 08:25:11 | SYSTEM | system task runner started: runner=313cbf22e1af-r50NaGOY idle_interval=15s 
+
+  [33mWarning: Refresh cookie is not secure and refresh/logout Origin validation is disabled. Please set SESSION_COOKIE_SECURE=true in production.[0m
+
+
+  [32mNew API v1.0.0-rc.41[0m  ready in 1153 ms
+
+  ➜  [1mNetwork:[0m http://172.26.0.5:3000/
+
+[GIN] 2026/10/08 - 08:25:12 | api | 202610080825124305172998268d9d6uONqlyHt | 200 |    4.492333ms |      172.26.0.1 |     GET /api/status
+[INFO] 2026/10/08 - 08:25:12 | 202610080825124396274248268d9d60WyBDk0C | 用户 1 需要预扣费 ＄0.000024 (funding=wallet) 
+[INFO] 2026/10/08 - 08:25:12 | 202610080825124873614248268d9d64ZKII4oD | 用户 1 需要预扣费 ＄0.000024 (funding=wallet) 
+[INFO] 2026/10/08 - 08:25:12 | 202610080825124396274248268d9d60WyBDk0C | 预扣费后补扣费：＄0.000016（实际消耗：＄0.000040，预扣费：＄0.000024） 
+[INFO] 2026/10/08 - 08:25:12 | 202610080825124396274248268d9d60WyBDk0C | record consume log: userId=1, params={"channel_id":1,"prompt_tokens":10,"completion_tokens":5,"model_name":"gpt-4o","token_name":"synthetic","quota":20,"content":"","token_id":1,"use_time_seconds":0,"is_stream":false,"group":"default","other":{"admin_info":{"request_policy":[{"attempt":1,"channel_id":1,"group":"default","elapsed_ms":20,"decision":{"action":"attempt","reason":"channel_selected","source":"routing"}},{"attempt":1,"channel_id":1,"group":"default","elapsed_ms":45,"decision":{"action":"stop","reason":"stream_not_successful","source":"system"}}],"usage_billing_path":"billing-usage-openai","use_channel":["1"]},"billing_source":"wallet","cache_ratio":0.5,"cache_tokens":0,"completion_ratio":2,"frt":-1000,"group_ratio":1,"input_tokens_total":10,"model_price":-1,"model_ratio":1,"request_conversion":["OpenAI Compatible","OpenAI Responses"],"request_path":"/v1/chat/completions","user_group_ratio":-1}} 
+[GIN] 2026/10/08 - 08:25:12 | relay | 202610080825124396274248268d9d60WyBDk0C | 200 |   56.805042ms |      172.26.0.1 |    POST /v1/chat/completions
+[INFO] 2026/10/08 - 08:25:12 | 202610080825124873614248268d9d64ZKII4oD | stream ended: reason=eof 
+[INFO] 2026/10/08 - 08:25:12 | 202610080825124873614248268d9d64ZKII4oD | 预扣费后补扣费：＄0.000016（实际消耗：＄0.000040，预扣费：＄0.000024） 
+[INFO] 2026/10/08 - 08:25:12 | 202610080825124873614248268d9d64ZKII4oD | record consume log: userId=1, params={"channel_id":1,"prompt_tokens":10,"completion_tokens":5,"model_name":"gpt-4o","token_name":"synthetic","quota":20,"content":"","token_id":1,"use_time_seconds":0,"is_stream":true,"group":"default","other":{"admin_info":{"request_policy":[{"attempt":1,"channel_id":1,"group":"default","elapsed_ms":2,"decision":{"action":"attempt","reason":"channel_selected","source":"routing"}},{"attempt":1,"channel_id":1,"group":"default","elapsed_ms":11,"decision":{"action":"success","reason":"request_completed","source":"upstream"}}],"usage_billing_path":"billing-usage-openai","use_channel":["1"]},"billing_source":"wallet","cache_ratio":0.5,"cache_tokens":0,"completion_ratio":2,"frt":6,"group_ratio":1,"input_tokens_total":10,"model_price":-1,"model_ratio":1,"request_conversion":["OpenAI Compatible","OpenAI Responses"],"request_path":"/v1/chat/completions","stream_status":{"end_reason":"eof","status":"ok"},"user_group_ratio":-1}} 
+[GIN] 2026/10/08 - 08:25:12 | relay | 202610080825124873614248268d9d64ZKII4oD | 200 |   13.063792ms |      172.26.0.1 |    POST /v1/chat/completions
+[SYS] 2026/10/08 - 08:25:12 | received signal: terminated, shutting down... 
+[SYS] 2026/10/08 - 08:25:12 | 保存数据看板数据成功，共保存1条数据 
+[SYS] 2026/10/08 - 08:25:12 | server exited 
+[SYS] 2026/10/08 - 08:25:13 | initializing token encoders 
+[SYS] 2026/10/08 - 08:25:13 | token encoders initialized 
+[SYS] 2026/10/08 - 08:25:13 | using PostgreSQL as database 
+[SYS] 2026/10/08 - 08:25:13 | database migration started 
+[SYS] 2026/10/08 - 08:25:14 | system is already initialized at: 2026-10-08 08:25:02 +0000 UTC 
+[SYS] 2026/10/08 - 08:25:14 | SYNC_FREQUENCY not set, use default value 60 
+[SYS] 2026/10/08 - 08:25:14 | Redis is enabled 
+[SYS] 2026/10/08 - 08:25:14 | i18n initialized with languages: zh-CN, zh-TW, en 
+[SYS] 2026/10/08 - 08:25:14 | Loaded 0 custom OAuth providers 
+[SYS] 2026/10/08 - 08:25:14 | New API v1.0.0-rc.41 started 
+[SYS] 2026/10/08 - 08:25:14 | memory cache enabled 
+[SYS] 2026/10/08 - 08:25:14 | sync frequency: 60 seconds 
+[SYS] 2026/10/08 - 08:25:14 | channels synced from database 
+[SYS] 2026/10/08 - 08:25:14 | 正在更新数据看板数据... 
+[SYS] 2026/10/08 - 08:25:14 | 保存数据看板数据成功，共保存0条数据 
+[INFO] 2026/10/08 - 08:25:14 | SYSTEM | codex credential auto-refresh task started: tick=10m0s threshold=24h0m0s 
+[INFO] 2026/10/08 - 08:25:14 | SYSTEM | subscription quota reset task started: tick=1m0s 
+[INFO] 2026/10/08 - 08:25:14 | SYSTEM | system task runner started: runner=313cbf22e1af-nO3b9D8Y idle_interval=15s 
+
+  [33mWarning: Refresh cookie is not secure and refresh/logout Origin validation is disabled. Please set SESSION_COOKIE_SECURE=true in production.[0m
+
+
+  [32mNew API v1.0.0-rc.41[0m  ready in 1211 ms
+
+  ➜  [1mNetwork:[0m http://172.26.0.5:3000/
+
+[GIN] 2026/10/08 - 08:25:14 | api | 202610080825149008934678268d9d6aALGs5vV | 200 |    3.306083ms |      172.26.0.1 |     GET /api/status
+[INFO] 2026/10/08 - 08:25:14 | 202610080825149074515098268d9d648JC5hxp | 用户 1 需要预扣费 ＄0.000024 (funding=wallet) 
+[INFO] 2026/10/08 - 08:25:14 | 202610080825149074515098268d9d648JC5hxp | 预扣费后补扣费：＄0.000016（实际消耗：＄0.000040，预扣费：＄0.000024） 
+[INFO] 2026/10/08 - 08:25:14 | 202610080825149074515098268d9d648JC5hxp | record consume log: userId=1, params={"channel_id":1,"prompt_tokens":10,"completion_tokens":5,"model_name":"gpt-4o","token_name":"synthetic","quota":20,"content":"","token_id":1,"use_time_seconds":0,"is_stream":false,"group":"default","other":{"admin_info":{"request_policy":[{"attempt":1,"channel_id":1,"group":"default","elapsed_ms":22,"decision":{"action":"attempt","reason":"channel_selected","source":"routing"}},{"attempt":1,"channel_id":1,"group":"default","elapsed_ms":45,"decision":{"action":"success","reason":"request_completed","source":"upstream"}}],"usage_billing_path":"billing-usage-openai","use_channel":["1"]},"billing_source":"wallet","cache_ratio":0.5,"cache_tokens":0,"completion_ratio":2,"frt":-1000,"group_ratio":1,"input_tokens_total":10,"model_price":-1,"model_ratio":1,"request_conversion":["OpenAI Compatible","OpenAI Responses"],"request_path":"/v1/chat/completions","user_group_ratio":-1}} 
+[GIN] 2026/10/08 - 08:25:14 | relay | 202610080825149074515098268d9d648JC5hxp | 200 |   54.268833ms |      172.26.0.1 |    POST /v1/chat/completions
+[SYS] 2026/10/08 - 08:25:15 | received signal: terminated, shutting down... 
+[SYS] 2026/10/08 - 08:25:15 | 保存数据看板数据成功，共保存1条数据 
+[SYS] 2026/10/08 - 08:25:15 | server exited 
+[SYS] 2026/10/08 - 08:25:15 | initializing token encoders 
+[SYS] 2026/10/08 - 08:25:15 | token encoders initialized 
+[SYS] 2026/10/08 - 08:25:15 | using PostgreSQL as database 
+[SYS] 2026/10/08 - 08:25:15 | database migration started 
+[SYS] 2026/10/08 - 08:25:16 | system is already initialized at: 2026-10-08 08:25:02 +0000 UTC 
+[SYS] 2026/10/08 - 08:25:16 | SYNC_FREQUENCY not set, use default value 60 
+[SYS] 2026/10/08 - 08:25:16 | Redis is enabled 
+[SYS] 2026/10/08 - 08:25:16 | i18n initialized with languages: zh-CN, zh-TW, en 
+[SYS] 2026/10/08 - 08:25:16 | Loaded 0 custom OAuth providers 
+[SYS] 2026/10/08 - 08:25:16 | New API v1.0.0-rc.41 started 
+[SYS] 2026/10/08 - 08:25:16 | memory cache enabled 
+[SYS] 2026/10/08 - 08:25:16 | sync frequency: 60 seconds 
+[SYS] 2026/10/08 - 08:25:16 | channels synced from database 
+[SYS] 2026/10/08 - 08:25:16 | 正在更新数据看板数据... 
+[SYS] 2026/10/08 - 08:25:16 | 保存数据看板数据成功，共保存0条数据 
+[INFO] 2026/10/08 - 08:25:16 | SYSTEM | codex credential auto-refresh task started: tick=10m0s threshold=24h0m0s 
+[INFO] 2026/10/08 - 08:25:16 | SYSTEM | subscription quota reset task started: tick=1m0s 
+[INFO] 2026/10/08 - 08:25:16 | SYSTEM | system task runner started: runner=313cbf22e1af-RzKPnXof idle_interval=15s 
+
+  [33mWarning: Refresh cookie is not secure and refresh/logout Origin validation is disabled. Please set SESSION_COOKIE_SECURE=true in production.[0m
+
+
+  [32mNew API v1.0.0-rc.41[0m  ready in 1190 ms
+
+  ➜  [1mNetwork:[0m http://172.26.0.5:3000/
+
+[GIN] 2026/10/08 - 08:25:17 | api | 202610080825173845584268268d9d6KGIMqB7Q | 200 |    3.534667ms |      172.26.0.1 |     GET /api/status
+[INFO] 2026/10/08 - 08:25:17 | 202610080825173907038858268d9d6cjEU7p1m | 用户 1 需要预扣费 ＄0.000024 (funding=wallet) 
+[INFO] 2026/10/08 - 08:25:17 | 202610080825173907038858268d9d6cjEU7p1m | 用户 1 请求失败, 返还预扣费（token_quota=＄0.000024, funding=wallet） 
+[GIN] 2026/10/08 - 08:25:17 | relay | 202610080825173907038858268d9d6cjEU7p1m | 400 |   50.461792ms |      172.26.0.1 |    POST /v1/chat/completions
+[INFO] 2026/10/08 - 08:25:17 | 202610080825174436483438268d9d6Jh0pjjOA | 用户 1 需要预扣费 ＄0.000024 (funding=wallet) 
+[INFO] 2026/10/08 - 08:25:17 | 202610080825174436483438268d9d6Jh0pjjOA | 用户 1 请求失败, 返还预扣费（token_quota=＄0.000024, funding=wallet） 
+[GIN] 2026/10/08 - 08:25:17 | relay | 202610080825174436483438268d9d6Jh0pjjOA | 400 |    4.380875ms |      172.26.0.1 |    POST /v1/chat/completions
