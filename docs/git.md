@@ -5,7 +5,7 @@
 ## 分支与上游同步
 
 - `origin` 是 `HubWu42/new-api`；`upstream` 是 `QuantumNous/new-api`。`upstream/main` 只跟随官方，不承载我们的修改。
-- 默认分支与合并目标都是 `main`。它保存官方基线与我们必要的修改；不再以 `custom` 作为开发或发布分支。旧 `custom` 要在发布链干跑通过后删除，恢复线上靠保留的镜像，不靠重建该分支。
+- 默认分支与合并目标都是 `main`。它保存官方基线与我们必要的修改；不再以 `custom` 作为开发或发布分支。旧 `custom` 分支与它带来的 `docker-image-custom.yml` 已于 2026-10-08 随发布链迁移删除；恢复线上靠保留的镜像 tag，不靠重建该分支。
 - 任务分支命名沿用 `feat/GS-<号>-<短描述>` 或 `fix/GS-<号>-<短描述>`，有父任务时使用父任务号。从 `origin/main` 建 worktree，改动经 PR 合入 `main`；主工作区仅快进更新。
 - 本仓**不放 Fleet 的临时工作文件**：执行期的日志、盘点、证据放 issue 评论或仓外的作业目录（`temp-data/` 已在 `.gitignore` 里）。这个仓是上游项目的公开 fork，临时件会公开可见，也会随每次跟上游 merge 一直留着。
 - 上游更新由人选择时机，手动 merge，不 rebase、不强制覆盖我们的历史。在任务 worktree 的分支执行：
@@ -66,7 +66,6 @@ bash scripts/release-tag.sh
 | `electron-build.yml` | push tags `*`、`!*-*`、`!*-alpha*`，另有 `workflow_dispatch`；`!*-*` 排除含 `-r1` 的日期 tag，保持启用。 |
 | `ci.yml` | `pull_request` 的 opened/synchronize/closed，不响应 tag push。 |
 | `sync-release-to-gitcode.yml` | 仅 `workflow_dispatch`，不响应 tag push。 |
-| `docker-image-custom.yml`（旧远端 `custom` 分支遗留） | push branches `custom`，另有 `workflow_dispatch`；不响应 tag push。迁移期间保持原状，新发布链取代它，删除 `custom` 后不再使用。 |
 
 远端可能仍显示旧基线的 `PR Check`；它不响应 tag push。远端列表与本地文件会随合入进度不同，不据此漏查本地新工作流。
 
