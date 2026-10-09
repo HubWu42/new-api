@@ -41,7 +41,16 @@ run_case 'older date' 1 'earlier than' --check 'v2026.10.7-r4'
 run_case 'earlier month, larger digit' 1 'earlier than' --check 'v2026.9.30-r1'
 run_case 'dry tag' 0 'Valid tag' --check 'v2026.10.8-r1-dry.2'
 run_case 'same-day gap' 1 'must increase' --check 'v2026.10.8-r2'
-run_case 'invalid calendar date' 1 'Invalid tag' --check 'v2026.2.29-r1'
+# 平年 2 月只有 28 天，2023.2.29 必须拒；下面 2024.2.29 合法，两条配成一闰一平的对子。
+run_case 'non-leap Feb 29 rejected' 1 'Invalid tag' --check 'v2023.2.29-r1'
+# 下面三条只考察 tag 自身的格式与日历边界，清空既有 tag，免得时序校验把日期较早的用例提前拦掉。
+export TEST_LOCAL_TAGS='' TEST_REMOTE_TAGS=''
+run_case 'leap day accepted' 0 'Valid tag' --check 'v2024.2.29-r1'
+# 月份上限必须拒：13 月的日期数字比 10 月大，不设上限会被数字排序碰巧放行。
+run_case 'month overflow rejected' 1 'Invalid tag' --check 'v2026.13.1-r1'
+# 干跑序号从 1 起（docs/git.md），-dry.0 非法。
+run_case 'dry revision zero rejected' 1 'Invalid tag' --check 'v2026.10.8-r1-dry.0'
+export TEST_LOCAL_TAGS='v2026.10.8-r1' TEST_REMOTE_TAGS='v2026.10.8-r3'
 run_case 'leading zero' 1 'Invalid tag' --check 'v2026.10.08-r4'
 run_case 'numeric month ordering' 0 'Valid tag' --check 'v2026.11.1-r1'
 export TEST_REMOTE_TAGS=$'v2026.10.8-r3\nv2026.10.8-r1-dry.2\nv2099.1.1-r1-dry.1'
@@ -56,6 +65,10 @@ export TEST_REMOTE_FAIL=1
 run_case 'remote failure closed' 1 'Cannot read origin' --check 'v2026.10.8-r4'
 unset TEST_REMOTE_FAIL
 now=$(TZ=Asia/Shanghai date +'%Y.%-m.%-d')
+# 干跑分配只看正式 tag：远端有更高序号的干跑 tag（r9-dry.9 的 N 远大于 9）也要忽略，否则会分配出 r10 而不是 r3。
+export TEST_LOCAL_TAGS="v$now-r2" TEST_REMOTE_TAGS="v$now-r2
+v$now-r9-dry.9"
+run_case 'higher dry tag ignored when allocating' 0 "Git tag: v$now-r3" --dry
 export TEST_LOCAL_TAGS="v$now-r2" TEST_REMOTE_TAGS="v$now-r9"
 run_case 'dry allocation from remote maximum' 0 "Git tag: v$now-r10" --dry
 export TEST_REMOTE_TAGS="v$now-r999"

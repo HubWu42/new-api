@@ -40,9 +40,14 @@ load_tags() {
   done <<< "$remote_tags"
 }
 
+# 解析失败就按同一个消息报错；成功则把 parse_tag 的输出原样传给调用方。
+require_valid_tag() {
+  parse_tag "$1" || fail "Invalid tag: $1 (use vYYYY.M.D-r1..999, valid date, no leading zeros; optional -dry.N with N >= 1)."
+}
+
 check_tag() {
   local candidate=$1 existing parsed candidate_date candidate_revision candidate_dry existing_date existing_revision existing_dry
-  parsed=$(parse_tag "$candidate") || fail "Invalid tag: $candidate (use vYYYY.M.D-r1..999, valid date, no leading zeros; optional -dry.N with N >= 1)."
+  parsed=$(require_valid_tag "$candidate")
   read -r candidate_date candidate_revision candidate_dry <<< "$parsed"
   while IFS= read -r existing; do
     # GitHub validates a tag which is already present. The local CLI never excludes it.
@@ -68,7 +73,7 @@ case $mode in
   create) (( $# == 0 )) || fail 'Usage: release-tag.sh [--dry | --check <tag>]' ;;
   --dry) (( $# == 1 )) || fail 'Usage: release-tag.sh --dry' ;;
   --check) (( $# == 2 )) || fail 'Usage: release-tag.sh --check <tag>'
-    parse_tag "$2" > /dev/null || fail "Invalid tag: $2 (use vYYYY.M.D-r1..999, valid date, no leading zeros; optional -dry.N with N >= 1)."
+    require_valid_tag "$2" > /dev/null
     ;;
   *) fail 'Usage: release-tag.sh [--dry | --check <tag>]' ;;
 esac
