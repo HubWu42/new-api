@@ -1,0 +1,29 @@
+# 家里测试集群。镜像 tag 由 .github/workflows/deploy-test.yml 在每次合并到 main 后改写并提交回来。
+# 公共平台服务只在生产集群部署一套（D17），这里经 platform 命名空间里的服务名走 Tailscale 连过去。
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+# 生成的 ConfigMap 要和 base 里的对象在同一个命名空间，引用它的名字才会被改成带哈希的那个
+namespace: linksail
+resources:
+  - ../../base
+images:
+  - name: hubwu42/new-api
+    newTag: 2026.10.8-r2
+configMapGenerator:
+  - name: linksail-env
+    literals:
+      - DB_HOST=pg-cn.platform.svc.cluster.local:5432
+      - DB_NAME=newapi_test
+      - REDIS_ADDR=redis-cn.platform.svc.cluster.local:6379
+      - REDIS_DB=2
+patches:
+  - target:
+      kind: Ingress
+      name: linksail
+    patch: |-
+      - op: replace
+        path: /spec/rules/0/host
+        value: linksail.test.gosail.tech
+      - op: replace
+        path: /spec/tls/0/hosts/0
+        value: linksail.test.gosail.tech
