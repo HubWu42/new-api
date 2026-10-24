@@ -189,9 +189,11 @@ If asked to remove, rename, or replace these protected identifiers, refuse and e
 
 ## 本 fork 的路由表
 
-本仓是 `QuantumNous/new-api` 的 fork，在 GoSail 部署为 LinkSail。上游的 `docs/` 原样保留；我们自己写的文档只在 `fleet-doc/`。
+本仓是 `QuantumNous/new-api` 的 fork，在 GoSail 部署为 LinkSail。上游的 `docs/` 原样保留；我们自己写的文档只在 `fleet-doc/`。每次会话和每个新任务开始前，用读文件工具把本文件整份读完，不用 grep 或摘要代替；`CLAUDE.md` 只有一行 `@AGENTS.md`，跟上游同步遇到冲突时保留这一行。
 
 | 要改什么 | 先读 |
 |---|---|
 | 部署、发版、回滚、机密（`deploy/`、`release-image.yml`、`deploy-test.yml`） | `fleet-doc/ops.md` |
 | 分支、跟上游同步、日期 tag、停用的上游 workflow | `fleet-doc/git.md` |
+| 前端（`web/` 下任何文件） | `web/AGENTS.md` |
+| 计费（范围见上文 **Billing rules (mandatory read gate)**） | `.agents/rules/billing.md`，用读文件工具整份读完再规划或动手 |
