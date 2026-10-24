@@ -3,7 +3,7 @@ name: Deploy test (main)
 # 合并到 main 发测试版（GoSail ADR-0005）：构建 hubwu42/new-api:main-<短 sha> →
 # 把这个 tag 提交回 deploy/k8s/linksail/overlays/test → 通知 Argo CD 同步家里测试集群。
 # CI 不直接碰集群：集群凭证不进 GitHub，版本号留在 Git 里可以重建。
-# 正式版走 release-image.yml（日期 tag），约定见 docs/git.md。
+# 正式版走 release-image.yml（日期 tag），约定见 fleet-doc/git.md。
 on:
   push:
     branches: [main]
