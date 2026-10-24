@@ -3,7 +3,7 @@ name: Release image (date tag)
 # 日期 tag 触发：校验 → 多架构构建 → 推 Docker Hub（不可变的日期 tag，另刷一个只作人肉拉取用的 latest）
 # → 把 release 分支快进到这个 tag 并通知 Argo CD 部署生产（GoSail ADR-0005）。
 # 生产部署哪一版由 deploy/k8s/linksail/overlays/prod 决定，scripts/release-tag.sh --prepare 在打 tag 前写好它。
-# 约定与调用见 docs/git.md 与 docs/deploy.md，实现与它们保持一致。
+# 约定与调用见 fleet-doc/git.md 与 fleet-doc/ops.md，实现与它们保持一致。
 on:
   push:
     tags:

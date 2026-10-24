@@ -5,9 +5,9 @@
 ## 分支与上游同步
 
 - `origin` 是 `HubWu42/new-api`；`upstream` 是 `QuantumNous/new-api`。`upstream/main` 只跟随官方，不承载我们的修改。
-- 默认分支与合并目标都是 `main`。它保存官方基线与我们必要的修改；不再以 `custom` 作为开发或发布分支。旧 `custom` 分支与它带来的 `docker-image-custom.yml` 已于 2026-10-08 随发布链迁移删除；恢复线上靠保留的镜像 tag，不靠重建该分支。
+- 默认分支与合并目标都是 `main`。它保存官方基线与我们必要的修改，也是唯一的开发与发布基线；恢复线上靠保留的镜像 tag。
 - 任务分支命名沿用 `feat/GS-<号>-<短描述>` 或 `fix/GS-<号>-<短描述>`，有父任务时使用父任务号。从 `origin/main` 建 worktree，改动经 PR 合入 `main`；主工作区仅快进更新。
-- 本仓**不放 Fleet 的临时工作文件**：执行期的日志、盘点、证据放 issue 评论或仓外的作业目录（`temp-data/` 已在 `.gitignore` 里）。这个仓是上游项目的公开 fork，临时件会公开可见，也会随每次跟上游 merge 一直留着。
+- 本仓**不放临时工作文件**：执行期的日志、盘点、证据放 issue 评论或仓外的作业目录（`temp-data/` 已在 `.gitignore` 里）。这个仓是上游项目的公开 fork，临时件会公开可见，也会随每次跟上游 merge 一直留着。
 - 上游更新由人选择时机，手动 merge，不 rebase、不强制覆盖我们的历史。在任务 worktree 的分支执行：
 
 ```bash
@@ -22,7 +22,7 @@ git merge-base --is-ancestor upstream/main HEAD
 
 ## 日期 tag 与脚本接口
 
-发布链的固定值（发布脚本、workflow、镜像仓、部署目标、凭据与发布顺序）见 [deploy.md](deploy.md)；改了名字同步改那一份。部署配置在 `deploy/k8s/linksail/`：测试环境跟 `main`，生产环境跟 `release` 分支，生产部署哪一版由 `overlays/prod` 里钉的镜像 tag 决定。
+发布链的固定值（发布脚本、workflow、镜像仓、部署目标、凭据与发布顺序）见 [ops.md](ops.md)；改了名字同步改那一份。部署配置在 `deploy/k8s/linksail/`：测试环境跟 `main`，生产环境跟 `release` 分支，生产部署哪一版由 `overlays/prod` 里钉的镜像 tag 决定。
 
 - 日期按 `Asia/Shanghai`（北京时间）。Git tag 是 `v年.月.日-r当日序号`，例如 `v2026.10.8-r1`；月、日不带前导零，序号为从 `r1` 起的正整数。
 - 镜像 tag 去掉开头的 `v`，例如 `2026.10.8-r1`。这是我们的发布标识，不改上游的版本号方案。
@@ -53,7 +53,7 @@ bash scripts/release-tag.sh
 
 发布前同步远端 tag，并确认待发布提交与 `origin/main` 一致、工作区干净。读取脚本输出，检查 tag 指向的提交。推送正式 tag 会部署生产，必须单独获得人的确认；用 `git push origin <本次生成的tag>` 仅推该 tag，不用 `--tags` 批量推送。
 
-本地 `--dry` 与推送 `-dry.N` tag 是两件事：前者完全不发布；后者会消耗 CI 与镜像仓资源，执行前同样需要确认。部署与回滚见 [deploy.md](deploy.md)。
+本地 `--dry` 与推送 `-dry.N` tag 是两件事：前者完全不发布；后者会消耗 CI 与镜像仓资源，执行前同样需要确认。部署与回滚见 [ops.md](ops.md)。
 
 ## 与上游工作流的差异
 
